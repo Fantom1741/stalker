@@ -1,0 +1,3365 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Война группировок — S.T.A.L.K.E.R. ЧН 2010</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@300;400;600;700&display=swap');
+:root{
+  --bg:#0a0c0a;--bg2:#0f120f;--bg3:#141a13;
+  --border:#2a3528;--border-bright:#3d5438;
+  --text:#b8ccb5;--text-dim:#6a7d68;--header:#e8f5e2;--accent:#5dba60;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100vh;
+  background-image:radial-gradient(ellipse at 20% 20%,rgba(40,70,35,.12) 0%,transparent 60%),
+  radial-gradient(ellipse at 80% 80%,rgba(20,50,20,.08) 0%,transparent 60%);}
+
+/* NAV */
+nav{background:var(--bg2);border-bottom:2px solid var(--border-bright);
+  display:flex;gap:0;overflow-x:auto;position:sticky;top:0;z-index:200;}
+nav::-webkit-scrollbar{height:3px;}
+nav::-webkit-scrollbar-thumb{background:var(--border-bright);}
+.nav-btn{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;
+  padding:14px 20px;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.nav-btn:hover{color:var(--text);}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* PAGE HEADER */
+.page-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:20px 30px 18px;position:relative;overflow:hidden;}
+.page-header::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.012) 2px,rgba(255,255,255,.012) 4px);pointer-events:none;}
+.header-row{display:flex;align-items:center;gap:16px;}
+.sigil{font-family:'Oswald',sans-serif;font-size:40px;font-weight:700;color:var(--accent);line-height:1;
+  text-shadow:0 0 28px rgba(93,186,96,.5);flex-shrink:0;}
+.header-text h1{font-family:'Oswald',sans-serif;font-size:18px;font-weight:600;color:var(--header);letter-spacing:3px;text-transform:uppercase;}
+.header-text p{font-size:10px;color:var(--text-dim);letter-spacing:2px;margin-top:3px;text-transform:uppercase;}
+
+/* SECTIONS */
+.section{display:none;padding:0;}
+.section.active{display:block;}
+#section-tables.active{display:grid;}
+
+/* LEGEND */
+.legend{display:flex;gap:16px;flex-wrap:wrap;padding:10px 20px;background:var(--bg3);border-bottom:1px solid var(--border);align-items:center;font-size:11px;}
+.legend-note{margin-left:auto;font-size:10px;opacity:.55;}
+
+/* FILTER BAR */
+.filter-bar{padding:12px 20px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.filter-bar label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-right:4px;}
+.filter-btn{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--text-dim);background:rgba(255,255,255,.03);border:1px solid var(--border);
+  padding:4px 10px;cursor:pointer;transition:all .15s;border-radius:2px;}
+.filter-btn:hover{color:var(--text);border-color:var(--border-bright);}
+.filter-btn.active{color:var(--accent) !important;border-color:var(--accent) !important;background:rgba(93,186,96,.08);}
+.filter-btn.all-btn{border-color:var(--border-bright);}
+
+/* TABLE */
+.wrapper{overflow-x:auto;padding:20px 10px 16px;-webkit-overflow-scrolling:touch;}
+.wrapper::-webkit-scrollbar{height:5px;}
+.wrapper::-webkit-scrollbar-track{background:var(--bg2);}
+.wrapper::-webkit-scrollbar-thumb{background:var(--border-bright);border-radius:3px;}
+table{border-collapse:collapse;min-width:max-content;}
+th,td{border:1px solid var(--border);text-align:center;white-space:nowrap;}
+.corner{background:var(--bg);min-width:30px;}
+.col-header{background:var(--bg2);padding:6px 5px;font-family:'Oswald',sans-serif;font-size:10px;
+  font-weight:400;letter-spacing:.8px;color:var(--text);text-transform:uppercase;
+  vertical-align:middle;width:66px;min-width:66px;max-width:80px;
+  white-space:normal;line-height:1.3;border-bottom:2px solid var(--border-bright);}
+.row-header{background:var(--bg2);padding:5px 12px 5px 8px;text-align:left;
+  font-family:'Oswald',sans-serif;font-size:11px;font-weight:400;letter-spacing:1px;
+  color:var(--text);text-transform:uppercase;border-right:2px solid var(--border-bright);min-width:160px;}
+.tag{display:inline-block;font-size:8px;padding:1px 4px;border-radius:2px;margin-left:4px;font-family:'Share Tech Mono',monospace;vertical-align:middle;}
+.tag-new{background:rgba(93,186,96,.15);color:var(--accent);border:1px solid rgba(93,186,96,.3);}
+.tag-cn{background:rgba(200,162,39,.12);color:#c8a227;border:1px solid rgba(200,162,39,.3);}
+td.cell{width:66px;min-width:66px;height:34px;font-size:15px;transition:background .12s,opacity .2s;cursor:default;}
+td.cell:hover{filter:brightness(1.35);}
+td.cell.self{background:var(--bg3);font-size:9px;color:var(--border-bright);}
+td.rel-green{background:rgba(76,175,80,.18);}
+td.rel-yellow{background:rgba(200,162,39,.13);}
+td.rel-red{background:rgba(192,57,43,.18);}
+td.rel-grey{background:rgba(74,82,73,.09);}
+td.rel-q{background:rgba(155,89,182,.14);}
+.sep-top td,.sep-top th{border-top:2px solid var(--border-bright) !important;}
+tr:hover td.cell.rel-green{background:rgba(76,175,80,.30);}
+tr:hover td.cell.rel-yellow{background:rgba(200,162,39,.24);}
+tr:hover td.cell.rel-red{background:rgba(192,57,43,.30);}
+tr:hover td.cell.rel-grey{background:rgba(74,82,73,.20);}
+tr:hover td.cell.rel-q{background:rgba(155,89,182,.28);}
+tr:hover .row-header{color:var(--accent);}
+
+/* FILTER DIMMING */
+tr.dim{opacity:.12;}
+tr.dim .row-header{color:var(--text-dim);}
+td.cell.dim-col{opacity:.12;}
+td.cell.highlight-col{outline:1px solid var(--accent);}
+
+/* TOOLTIP */
+.tooltip{position:relative;}
+.tooltip:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);
+  background:#1a221a;border:1px solid var(--border-bright);color:var(--text);
+  font-size:10px;padding:4px 8px;white-space:nowrap;z-index:300;pointer-events:none;font-family:'Share Tech Mono',monospace;}
+
+/* SECTION TITLE */
+.section-title{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:3px;color:var(--text-dim);
+  text-transform:uppercase;padding:20px 20px 10px;border-top:1px solid var(--border);}
+
+/* CONFLICTS */
+.conflicts{padding:0 16px 8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px;}
+.note{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--border-bright);
+  padding:10px 12px;font-size:11px;line-height:1.65;color:var(--text-dim);}
+.note strong{color:var(--text);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:1px;display:block;margin-bottom:4px;}
+.note.hostile{border-left-color:#c0392b;}
+.note.neutral{border-left-color:#c8a227;}
+.note.positive{border-left-color:#4caf50;}
+.note.mystery{border-left-color:#9b59b6;}
+
+/* FACTION CARDS — штабной архив */
+.factions-grid{padding:0 16px 50px;display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:13px;}
+.faction-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-top:3px solid var(--border-bright);
+  padding:14px 16px 16px;
+  position:relative;
+  overflow:hidden;
+  transition:border-top-color .2s, box-shadow .2s;
+}
+/* scanline overlay */
+.faction-card::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,.008) 3px,rgba(255,255,255,.008) 4px);
+}
+/* "ФАЙЛ" watermark stamp */
+.faction-card::after{
+  content:'ФАЙЛ';position:absolute;top:8px;right:10px;
+  font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:3px;
+  color:rgba(255,255,255,.04);pointer-events:none;
+}
+.faction-card:hover{border-top-color:var(--accent);box-shadow:0 0 12px rgba(93,186,96,.06);}
+.faction-card.new-faction{border-top-color:rgba(93,186,96,.6);}
+.faction-card.cn-faction{border-top-color:rgba(200,162,39,.5);}
+.fc-header{display:flex;align-items:baseline;gap:10px;margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:7px;}
+.fc-header h3{font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;color:var(--header);letter-spacing:2px;text-transform:uppercase;}
+.fc-type{font-size:9px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;flex-shrink:0;}
+.fc-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+.chip{font-size:9px;padding:2px 6px;border-radius:2px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-dim);}
+.chip.r{border-color:rgba(192,57,43,.4);color:#e07060;}
+.chip.g{border-color:rgba(76,175,80,.4);color:#7ec880;}
+.chip.y{border-color:rgba(200,162,39,.4);color:#c8a227;}
+.chip.p{border-color:rgba(155,89,182,.4);color:#bb87d8;}
+.fc-desc{font-size:11px;line-height:1.7;color:var(--text-dim);}
+.fc-desc p{margin-bottom:6px;}
+.fc-desc p:last-child{margin-bottom:0;}
+.fc-hook{margin-top:8px;padding-top:7px;border-top:1px solid var(--border);font-size:10px;color:#6a8f6a;line-height:1.5;}
+.fc-hook::before{content:"▶ ";color:var(--accent);}
+
+/* PRISMA DOSSIER */
+.dossier{max-width:820px;margin:0 auto;padding:24px 20px 60px;}
+.dossier-header{border:1px solid var(--border);border-top:3px solid #c0392b;background:var(--bg2);padding:20px 24px;margin-bottom:20px;position:relative;}
+.dossier-header::before{content:'СОВЕРШЕННО СЕКРЕТНО';position:absolute;top:8px;right:12px;font-size:9px;color:rgba(192,57,43,.6);letter-spacing:2px;}
+.dossier-codename{font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;color:#e8f5e2;letter-spacing:4px;margin-bottom:4px;}
+.dossier-sub{font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;}
+.dossier-meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:20px;}
+.dossier-field{background:var(--bg2);border:1px solid var(--border);padding:10px 14px;}
+.dossier-field-label{font-size:9px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.dossier-field-value{font-size:12px;color:var(--text);line-height:1.4;}
+.dossier-section{margin-bottom:20px;}
+.dossier-section h4{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text-dim);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;}
+.dossier-text{font-size:12px;line-height:1.8;color:var(--text-dim);}
+.dossier-text p{margin-bottom:10px;}
+.dossier-text p:last-child{margin-bottom:0;}
+.dossier-redacted{background:#c0392b;color:transparent;border-radius:1px;user-select:none;padding:0 4px;}
+.dossier-warning{border:1px solid rgba(192,57,43,.4);background:rgba(192,57,43,.06);padding:12px 16px;
+  font-size:11px;color:rgba(192,57,43,.8);letter-spacing:.5px;margin-top:16px;line-height:1.6;}
+
+/* TIMELINE */
+.timeline{max-width:700px;margin:0 auto;padding:20px 20px 60px;}
+.timeline-year{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--accent);
+  letter-spacing:3px;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.tl-item{display:flex;gap:16px;margin-bottom:16px;position:relative;}
+.tl-item::before{content:'';position:absolute;left:52px;top:24px;bottom:-16px;width:1px;background:var(--border);}
+.tl-item:last-child::before{display:none;}
+.tl-date{font-size:10px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;min-width:52px;padding-top:2px;flex-shrink:0;}
+.tl-card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--border-bright);
+  padding:10px 14px;flex:1;}
+.tl-card.hostile{border-left-color:#c0392b;}
+.tl-card.event{border-left-color:#c8a227;}
+.tl-card.mystery{border-left-color:#9b59b6;}
+.tl-card.positive{border-left-color:#4caf50;}
+.tl-title{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text);margin-bottom:4px;}
+.tl-desc{font-size:11px;color:var(--text-dim);line-height:1.6;}
+.tl-factions{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.tl-tag{font-size:9px;padding:1px 6px;border-radius:2px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-dim);}
+
+/* PLOTS */
+.plots{padding:0 16px 50px;display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;}
+.plot-card{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--border-bright);padding:15px 17px;}
+.plot-card.alpha{border-top-color:rgba(192,57,43,.7);}
+.plot-num{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:rgba(255,255,255,.05);
+  float:right;line-height:1;margin-left:10px;}
+.plot-title{font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;color:var(--header);
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.plot-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+.plot-tag{font-size:9px;padding:2px 7px;border-radius:2px;border:1px solid var(--border);color:var(--text-dim);}
+.plot-tag.alpha-tag{border-color:rgba(192,57,43,.5);color:#e07060;}
+.plot-tag.link-tag{border-color:rgba(93,186,96,.4);color:#7ec880;}
+.plot-desc{font-size:11px;line-height:1.7;color:var(--text-dim);}
+.plot-hook{margin-top:8px;padding-top:7px;border-top:1px solid var(--border);font-size:10px;color:#6a8f6a;}
+.plot-hook::before{content:"→ ";color:var(--accent);}
+
+/* MOBILE */
+@media(max-width:600px){
+  .nav-btn{padding:12px 14px;font-size:10px;}
+  .page-header{padding:16px;}
+  .sigil{font-size:32px;}
+  .header-text h1{font-size:14px;letter-spacing:2px;}
+  .filter-bar{padding:8px 12px;}
+  .dossier{padding:16px 12px 40px;}
+  .dossier-codename{font-size:24px;}
+  .timeline{padding:16px 12px 40px;}
+}
+</style>
+</head>
+<body>
+<div class="page-header">
+<div class="header-row">
+<div class="sigil">☢</div>
+<div class="header-text">
+<h1>Война группировок</h1>
+</div>
+</div>
+</div>
+<nav>
+<button class="nav-btn active" onclick="showSection('relations')">Таблица отношений</button>
+<button class="nav-btn" onclick="showSection('factions')">Досье группировок</button>
+<button class="nav-btn" onclick="showSection('dosye')">Досье</button>
+<button class="nav-btn" onclick="showSection('locations')">Локации</button>
+<button class="nav-btn" onclick="showSection('bestiary')">Бестиарий</button>
+<button class="nav-btn" onclick="showSection('artifacts')">Артефакты</button>
+<button class="nav-btn" onclick="showSection('anomalies')">Аномалии</button>
+<button class="nav-btn" onclick="showSection('tables')">Таблицы</button>
+<button class="nav-btn" onclick="showSection('generator')">Генератор заданий</button>
+</nav>
+<!-- ===== ТАБЛИЦА ===== -->
+<div class="section active" id="section-relations">
+<div class="legend">
+<span>🟢 Союз</span>
+<span>🟡 Нейтралитет</span>
+<span>🔴 Враждебность</span>
+<span>⚫ Безразличие</span>
+<span>❓ Непредсказуемо</span>
+<span class="legend-note">NEW = Global War  |  ЧН = стандартные</span>
+</div>
+<div class="filter-bar">
+<label>Фильтр:</label>
+<button class="filter-btn all-btn active" onclick="filterTable(null,this)">Все</button>
+<button class="filter-btn" onclick="filterTable('varyagi',this)">Варяги</button>
+<button class="filter-btn" onclick="filterTable('iig',this)">ИИГ</button>
+<button class="filter-btn" onclick="filterTable('fantomu',this)">Фантомы</button>
+<button class="filter-btn" onclick="filterTable('angels',this)">Пад. Ангелы</button>
+<button class="filter-btn" onclick="filterTable('dark',this)">Тёмн. Ст.</button>
+<button class="filter-btn" onclick="filterTable('greh',this)">Грех</button>
+<button class="filter-btn" onclick="filterTable('hunters',this)">Охотники</button>
+<button class="filter-btn" onclick="filterTable('lastday',this)">Посл. День</button>
+<button class="filter-btn" onclick="filterTable('peacekeepers',this)">Миротворцы</button>
+<button class="filter-btn" onclick="filterTable('alpha',this)">ЧВК Альфа</button>
+<button class="filter-btn" onclick="filterTable('cn',this)">Чистое Небо</button>
+<button class="filter-btn" onclick="filterTable('dolg',this)">Долг</button>
+<button class="filter-btn" onclick="filterTable('svoboda',this)">Свобода</button>
+<button class="filter-btn" onclick="filterTable('renegaty',this)">Ренегаты</button>
+<button class="filter-btn" onclick="filterTable('bandity',this)">Бандиты</button>
+<button class="filter-btn" onclick="filterTable('naemniki',this)">Наёмники</button>
+<button class="filter-btn" onclick="filterTable('monolit',this)">Монолит</button>
+<button class="filter-btn" onclick="filterTable('military',this)">Военные</button>
+<button class="filter-btn" onclick="filterTable('uchenye',this)">Учёные</button>
+<button class="filter-btn" onclick="filterTable('odinochki',this)">Одиночки</button>
+</div>
+<div class="wrapper">
+<table id="rel-table">
+<thead>
+<tr>
+<th class="corner"></th>
+<th class="col-header" data-col="varyagi">Варяги</th>
+<th class="col-header" data-col="iig">ИИГ</th>
+<th class="col-header" data-col="fantomu">Фантомы</th>
+<th class="col-header" data-col="angels">Пад. Ангелы</th>
+<th class="col-header" data-col="dark">Тёмн. Сталк.</th>
+<th class="col-header" data-col="greh">Грех</th>
+<th class="col-header" data-col="hunters">Охотники</th>
+<th class="col-header" data-col="lastday">Посл. День</th>
+<th class="col-header" data-col="peacekeepers">Миротворцы</th>
+<th class="col-header" data-col="alpha">ЧВК Альфа</th>
+<th class="col-header" data-col="cn">Чистое Небо</th>
+<th class="col-header" data-col="dolg">Долг</th>
+<th class="col-header" data-col="svoboda">Свобода</th>
+<th class="col-header" data-col="renegaty">Ренегаты</th>
+<th class="col-header" data-col="bandity">Бандиты</th>
+<th class="col-header" data-col="naemniki">Наёмники</th>
+<th class="col-header" data-col="monolit">Монолит</th>
+<th class="col-header" data-col="military">Военные (УКР)</th>
+<th class="col-header" data-col="uchenye">Учёные</th>
+<th class="col-header" data-col="odinochki">Одиночки</th>
+</tr>
+</thead>
+<tbody>
+<tr data-faction="varyagi">
+<th class="row-header">Варяги <span class="tag tag-new">NEW</span></th>
+<td class="cell self" data-col="varyagi">—</td>
+<td class="cell rel-red tooltip" data-col="iig" data-tip="Взаимная ликвидация">🔴</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="Враги О-сознания">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="angels" data-tip="Не мешают друг другу">🟡</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Мутанты — враги">🔴</td>
+<td class="cell rel-red tooltip" data-col="greh" data-tip="Варяги презирают культистов">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="hunters" data-tip="Уважают как добытчиков">🟡</td>
+<td class="cell rel-grey tooltip" data-col="lastday" data-tip="Разные интересы">⚫</td>
+<td class="cell rel-red tooltip" data-col="peacekeepers" data-tip="Военные = враги">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="alpha" data-tip="Уважение профессионалов">🟡</td>
+<td class="cell rel-red tooltip" data-col="cn" data-tip="ЧН против дестабилизации">🔴</td>
+<td class="cell rel-red tooltip" data-col="dolg" data-tip="Дезертиры — враги Долга">🔴</td>
+<td class="cell rel-red tooltip" data-col="svoboda" data-tip="Нападают на всех">🔴</td>
+<td class="cell rel-red tooltip" data-col="renegaty" data-tip="Дезертиры, но разные лагеря">🔴</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Презирают трусов">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="naemniki" data-tip="Ситуативно">🟡</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Враждебность">🔴</td>
+<td class="cell rel-red tooltip" data-col="military" data-tip="Дезертиры из армии">🔴</td>
+<td class="cell rel-grey tooltip" data-col="uchenye" data-tip="Учёные не интересны">⚫</td>
+<td class="cell rel-red tooltip" data-col="odinochki" data-tip="Лёгкая добыча — или мишень для проверки">🔴</td>
+</tr>
+<tr data-faction="iig">
+<th class="row-header">ИИГ <span class="tag tag-new">NEW</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Взаимная угроза">🔴</td>
+<td class="cell self" data-col="iig">—</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="О-сознание против ИИГ">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="angels" data-tip="Общий интерес к данным">🟡</td>
+<td class="cell rel-grey tooltip" data-col="dark" data-tip="Не пересекаются">⚫</td>
+<td class="cell rel-grey tooltip" data-col="greh" data-tip="Игнорируют">⚫</td>
+<td class="cell rel-grey tooltip" data-col="hunters" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-yellow tooltip" data-col="lastday" data-tip="Обмен данными о лабораториях">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="peacekeepers" data-tip="США координируют негласно">🟡</td>
+<td class="cell rel-red tooltip" data-col="alpha" data-tip="Конкуренция за лаборатории">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="cn" data-tip="Осторожный нейтралитет">🟡</td>
+<td class="cell rel-grey tooltip" data-col="dolg" data-tip="Нет прямого контакта">⚫</td>
+<td class="cell rel-grey tooltip" data-col="svoboda" data-tip="Игнорируют">⚫</td>
+<td class="cell rel-grey tooltip" data-col="renegaty" data-tip="Не интересны">⚫</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Ликвидируют как свидетелей">🔴</td>
+<td class="cell rel-green tooltip" data-col="naemniki" data-tip="ИИГ нанимает наёмников">🟢</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="О-сознание опасно для ИИГ">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="military" data-tip="Осторожный нейтралитет">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="uchenye" data-tip="Интерес к данным">🟡</td>
+<td class="cell rel-red tooltip" data-col="odinochki" data-tip="Свидетели — ликвидируются">🔴</td>
+</tr>
+<tr data-faction="fantomu">
+<th class="row-header">Фантомы <span class="tag tag-new">NEW</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Все посторонние — враги">🔴</td>
+<td class="cell rel-red tooltip" data-col="iig" data-tip="ИИГ угрожает О-сознанию">🔴</td>
+<td class="cell self" data-col="fantomu">—</td>
+<td class="cell rel-red tooltip" data-col="angels" data-tip="Устраняют конкурентов">🔴</td>
+<td class="cell rel-green tooltip" data-col="dark" data-tip="Союзники О-сознания">🟢</td>
+<td class="cell rel-q tooltip" data-col="greh" data-tip="Тёмная связь, неизвестно">❓</td>
+<td class="cell rel-red tooltip" data-col="hunters" data-tip="Охотники мешают операциям">🔴</td>
+<td class="cell rel-red tooltip" data-col="lastday" data-tip="Уничтожают тех, кто знает">🔴</td>
+<td class="cell rel-red tooltip" data-col="peacekeepers" data-tip="Противники О-сознания">🔴</td>
+<td class="cell rel-red tooltip" data-col="alpha" data-tip="Конкуренция за лаборатории">🔴</td>
+<td class="cell rel-red tooltip" data-col="cn" data-tip="ЧН против О-сознания">🔴</td>
+<td class="cell rel-red tooltip" data-col="dolg" data-tip="Долг против Монолита">🔴</td>
+<td class="cell rel-red tooltip" data-col="svoboda" data-tip="Свобода против Монолита">🔴</td>
+<td class="cell rel-grey tooltip" data-col="renegaty" data-tip="Ренегаты не интересны">⚫</td>
+<td class="cell rel-grey tooltip" data-col="bandity" data-tip="Бандиты не интересны">⚫</td>
+<td class="cell rel-q tooltip" data-col="naemniki" data-tip="Фантомы — бывшие наёмники?">❓</td>
+<td class="cell rel-green tooltip" data-col="monolit" data-tip="Служат одному господину">🟢</td>
+<td class="cell rel-red tooltip" data-col="military" data-tip="Военные — враги Монолита">🔴</td>
+<td class="cell rel-red tooltip" data-col="uchenye" data-tip="Учёные мешают О-сознанию">🔴</td>
+<td class="cell rel-grey tooltip" data-col="odinochki" data-tip="Одиночки не интересны">⚫</td>
+</tr>
+<tr data-faction="angels">
+<th class="row-header">Падшие Ангелы <span class="tag tag-new">NEW</span></th>
+<td class="cell rel-yellow tooltip" data-col="varyagi" data-tip="Не мешают друг другу">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="iig" data-tip="Общий интерес к данным">🟡</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="Прямые враги">🔴</td>
+<td class="cell self" data-col="angels">—</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Мутанты — угроза">🔴</td>
+<td class="cell rel-red tooltip" data-col="greh" data-tip="Культисты дестабилизируют Зону">🔴</td>
+<td class="cell rel-green tooltip" data-col="hunters" data-tip="Союзники, общий подход">🟢</td>
+<td class="cell rel-green tooltip" data-col="lastday" data-tip="Делятся данными">🟢</td>
+<td class="cell rel-yellow tooltip" data-col="peacekeepers" data-tip="Общая цель — порядок">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="alpha" data-tip="Ситуативный нейтралитет">🟡</td>
+<td class="cell rel-green tooltip" data-col="cn" data-tip="Похожая идеология">🟢</td>
+<td class="cell rel-yellow tooltip" data-col="dolg" data-tip="Уважение, разные методы">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="svoboda" data-tip="Нейтралитет">🟡</td>
+<td class="cell rel-red tooltip" data-col="renegaty" data-tip="Ренегаты — угроза стабильности">🔴</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Активно противодействуют">🔴</td>
+<td class="cell rel-grey tooltip" data-col="naemniki" data-tip="Нет прямого контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="О-сознание — главная угроза">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="military" data-tip="Осторожный нейтралитет">🟡</td>
+<td class="cell rel-green tooltip" data-col="uchenye" data-tip="Общий интерес к науке">🟢</td>
+<td class="cell rel-green tooltip" data-col="odinochki" data-tip="Помогают нейтральным сталкерам — это их призвание">🟢</td>
+</tr>
+<tr data-faction="dark">
+<th class="row-header">Тёмн. Сталкеры <span class="tag tag-new">NEW</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Атакуют всех чужих">🔴</td>
+<td class="cell rel-grey tooltip" data-col="iig" data-tip="ИИГ их не замечает">⚫</td>
+<td class="cell rel-green tooltip" data-col="fantomu" data-tip="Союзники О-сознания">🟢</td>
+<td class="cell rel-red tooltip" data-col="angels" data-tip="Враги Монолита — враги ТС">🔴</td>
+<td class="cell self" data-col="dark">—</td>
+<td class="cell rel-q tooltip" data-col="greh" data-tip="Оба служат тьме — но разной">❓</td>
+<td class="cell rel-red tooltip" data-col="hunters" data-tip="Охотники их уничтожают">🔴</td>
+<td class="cell rel-grey tooltip" data-col="lastday" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="peacekeepers" data-tip="Иностранцы в Зоне — враги">🔴</td>
+<td class="cell rel-red tooltip" data-col="alpha" data-tip="Чужаки в лабораториях">🔴</td>
+<td class="cell rel-red tooltip" data-col="cn" data-tip="ЧН против Монолита">🔴</td>
+<td class="cell rel-red tooltip" data-col="dolg" data-tip="Долг их истребляет">🔴</td>
+<td class="cell rel-red tooltip" data-col="svoboda" data-tip="Свобода против Монолита">🔴</td>
+<td class="cell rel-red tooltip" data-col="renegaty" data-tip="Атакуют всех людей">🔴</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Атакуют всех">🔴</td>
+<td class="cell rel-red tooltip" data-col="naemniki" data-tip="Враждебны ко всем людям">🔴</td>
+<td class="cell rel-green tooltip" data-col="monolit" data-tip="Помогают Монолиту">🟢</td>
+<td class="cell rel-red tooltip" data-col="military" data-tip="Военные — враги">🔴</td>
+<td class="cell rel-red tooltip" data-col="uchenye" data-tip="Учёные — угроза">🔴</td>
+<td class="cell rel-red tooltip" data-col="odinochki" data-tip="Атакуют всех">🔴</td>
+</tr>
+<tr data-faction="greh">
+<th class="row-header">Грех <span class="tag tag-new">NEW</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Варяги их уничтожают">🔴</td>
+<td class="cell rel-grey tooltip" data-col="iig" data-tip="ИИГ игнорирует">⚫</td>
+<td class="cell rel-q tooltip" data-col="fantomu" data-tip="Тёмный союз или война?">❓</td>
+<td class="cell rel-red tooltip" data-col="angels" data-tip="Ангелы против культа">🔴</td>
+<td class="cell rel-q tooltip" data-col="dark" data-tip="Разные боги, общая тьма">❓</td>
+<td class="cell self" data-col="greh">—</td>
+<td class="cell rel-red tooltip" data-col="hunters" data-tip="Охотники их зачищают">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="lastday" data-tip="Оба изучают зомби — через посредников">🟡</td>
+<td class="cell rel-red tooltip" data-col="peacekeepers" data-tip="Военные их преследуют">🔴</td>
+<td class="cell rel-grey tooltip" data-col="alpha" data-tip="Альфа их игнорирует">⚫</td>
+<td class="cell rel-red tooltip" data-col="cn" data-tip="ЧН против нечисти">🔴</td>
+<td class="cell rel-red tooltip" data-col="dolg" data-tip="Долг активно истребляет Грех">🔴</td>
+<td class="cell rel-red tooltip" data-col="svoboda" data-tip="Свобода против Греха">🔴</td>
+<td class="cell rel-grey tooltip" data-col="renegaty" data-tip="Ренегатам не до культистов">⚫</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Бандиты их боятся и ненавидят">🔴</td>
+<td class="cell rel-grey tooltip" data-col="naemniki" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Религиозная война с Монолитом">🔴</td>
+<td class="cell rel-red tooltip" data-col="military" data-tip="Военные их преследуют">🔴</td>
+<td class="cell rel-grey tooltip" data-col="uchenye" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="odinochki" data-tip="Одиночки — удобный материал для ритуалов">🔴</td>
+</tr>
+<tr data-faction="hunters">
+<th class="row-header">Охотники <span class="tag tag-new">NEW</span></th>
+<td class="cell rel-yellow tooltip" data-col="varyagi" data-tip="Не пересекаются по целям">🟡</td>
+<td class="cell rel-grey tooltip" data-col="iig" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="Фантомы опасны">🔴</td>
+<td class="cell rel-green tooltip" data-col="angels" data-tip="Союзники">🟢</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Охотятся на мутантов">🔴</td>
+<td class="cell rel-red tooltip" data-col="greh" data-tip="Зачищают культистов">🔴</td>
+<td class="cell self" data-col="hunters">—</td>
+<td class="cell rel-yellow tooltip" data-col="lastday" data-tip="Ситуативный обмен данными">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="peacekeepers" data-tip="Нейтральны">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="alpha" data-tip="Выполняют задания для Альфы">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="cn" data-tip="Уважают ЧН">🟡</td>
+<td class="cell rel-green tooltip" data-col="dolg" data-tip="Союзники Долга">🟢</td>
+<td class="cell rel-yellow tooltip" data-col="svoboda" data-tip="Нейтральны">🟡</td>
+<td class="cell rel-red tooltip" data-col="renegaty" data-tip="Ренегаты мешают охоте">🔴</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Бандиты — главные враги">🔴</td>
+<td class="cell rel-grey tooltip" data-col="naemniki" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Монолит опасен">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="military" data-tip="Военные их не трогают">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="uchenye" data-tip="Сотрудничество">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="odinochki" data-tip="Коллеги по выживанию">🟡</td>
+</tr>
+<tr data-faction="lastday">
+<th class="row-header">Последний День <span class="tag tag-new">NEW</span></th>
+<td class="cell rel-grey tooltip" data-col="varyagi" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-yellow tooltip" data-col="iig" data-tip="Обмен данными о лабораториях">🟡</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="О-сознание — главная угроза">🔴</td>
+<td class="cell rel-green tooltip" data-col="angels" data-tip="Делятся данными">🟢</td>
+<td class="cell rel-grey tooltip" data-col="dark" data-tip="Игнорируют мутантов">⚫</td>
+<td class="cell rel-yellow tooltip" data-col="greh" data-tip="Обмен через посредников">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="hunters" data-tip="Ситуативный контакт">🟡</td>
+<td class="cell self" data-col="lastday">—</td>
+<td class="cell rel-yellow tooltip" data-col="peacekeepers" data-tip="Нейтральны">🟡</td>
+<td class="cell rel-q tooltip" data-col="alpha" data-tip="Альфа хочет их архивы">❓</td>
+<td class="cell rel-yellow tooltip" data-col="cn" data-tip="Осторожный нейтралитет">🟡</td>
+<td class="cell rel-grey tooltip" data-col="dolg" data-tip="Нет прямого контакта">⚫</td>
+<td class="cell rel-grey tooltip" data-col="svoboda" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-grey tooltip" data-col="renegaty" data-tip="Ренегатам не до науки">⚫</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Бандиты угрожают">🔴</td>
+<td class="cell rel-grey tooltip" data-col="naemniki" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="О-сознание — причина конца">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="military" data-tip="Военные их не трогают">🟡</td>
+<td class="cell rel-green tooltip" data-col="uchenye" data-tip="Шпионят за Сахаровым, но уважают">🟢</td>
+<td class="cell rel-grey tooltip" data-col="odinochki" data-tip="Нет интереса">⚫</td>
+</tr>
+<tr data-faction="peacekeepers">
+<th class="row-header">Миротворцы (США) <span class="tag tag-new">NEW</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Варяги атакуют всех военных">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="iig" data-tip="США координируют негласно">🟡</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="О-сознание опасно">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="angels" data-tip="Нейтральны">🟡</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Угроза периметру">🔴</td>
+<td class="cell rel-red tooltip" data-col="greh" data-tip="Уничтожают культистов">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="hunters" data-tip="Нейтральны">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="lastday" data-tip="Нейтральны">🟡</td>
+<td class="cell self" data-col="peacekeepers">—</td>
+<td class="cell rel-red tooltip" data-col="alpha" data-tip="Конкуренция за объекты">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="cn" data-tip="Официальный нейтралитет">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="dolg" data-tip="Союзники по периметру">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="svoboda" data-tip="Официальный нейтралитет">🟡</td>
+<td class="cell rel-red tooltip" data-col="renegaty" data-tip="Ренегаты — дезертиры и враги">🔴</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Зачищают бандитов">🔴</td>
+<td class="cell rel-red tooltip" data-col="naemniki" data-tip="Наёмники подозрительны">🔴</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Монолит — угроза миссии">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="military" data-tip="Союзники по мандату ООН">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="uchenye" data-tip="Поддерживают науку">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="odinochki" data-tip="Официальный нейтралитет, прогоняют от периметра">🟡</td>
+</tr>
+<tr data-faction="alpha">
+<th class="row-header">ЧВК «Альфа» <span class="tag tag-new">NEW</span></th>
+<td class="cell rel-yellow tooltip" data-col="varyagi" data-tip="Уважение профессионалов">🟡</td>
+<td class="cell rel-red tooltip" data-col="iig" data-tip="Конкуренты за лаборатории">🔴</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="О-сознание против Альфы">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="angels" data-tip="Ситуативный нейтралитет">🟡</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Мутанты опасны для операций">🔴</td>
+<td class="cell rel-grey tooltip" data-col="greh" data-tip="Альфа игнорирует культистов">⚫</td>
+<td class="cell rel-yellow tooltip" data-col="hunters" data-tip="Разведчики Зоны — полезны">🟡</td>
+<td class="cell rel-q tooltip" data-col="lastday" data-tip="Парсек хочет их архивы">❓</td>
+<td class="cell rel-red tooltip" data-col="peacekeepers" data-tip="Конкуренция за объекты">🔴</td>
+<td class="cell self" data-col="alpha">—</td>
+<td class="cell rel-yellow tooltip" data-col="cn" data-tip="Осторожный нейтралитет">🟡</td>
+<td class="cell rel-green tooltip" data-col="dolg" data-tip="Контракты для Долга">🟢</td>
+<td class="cell rel-yellow tooltip" data-col="svoboda" data-tip="Нейтралитет">🟡</td>
+<td class="cell rel-red tooltip" data-col="renegaty" data-tip="Ренегаты создают шум — мешают операциям">🔴</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Бандиты — угроза операциям">🔴</td>
+<td class="cell rel-green tooltip" data-col="naemniki" data-tip="Нанимают наёмников">🟢</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Монолит против всех в лабораториях">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="military" data-tip="Бывшие коллеги — осторожно">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="uchenye" data-tip="Данные учёных полезны">🟡</td>
+<td class="cell rel-red tooltip" data-col="odinochki" data-tip="Нежелательные свидетели">🔴</td>
+</tr>
+<!-- СТАНДАРТНЫЕ -->
+<tr class="sep-top" data-faction="cn">
+<th class="row-header">Чистое Небо <span class="tag tag-cn">ЧН</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Варяги дестабилизируют Зону">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="iig" data-tip="Осторожный нейтралитет">🟡</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="Прислужники О-сознания">🔴</td>
+<td class="cell rel-green tooltip" data-col="angels" data-tip="Похожая идеология">🟢</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Угроза равновесию Зоны">🔴</td>
+<td class="cell rel-red tooltip" data-col="greh" data-tip="Культисты опасны">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="hunters" data-tip="Нейтральны, уважают">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="lastday" data-tip="Ситуативный контакт">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="peacekeepers" data-tip="Официальный нейтралитет">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="alpha" data-tip="Нейтралитет">🟡</td>
+<td class="cell self" data-col="cn">—</td>
+<td class="cell rel-yellow tooltip" data-col="dolg" data-tip="Уважение, сотрудничество">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="svoboda" data-tip="Нейтральны">🟡</td>
+<td class="cell rel-red tooltip" data-col="renegaty" data-tip="Ренегаты — предатели из своих">🔴</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Бандиты угрожают исследованиям">🔴</td>
+<td class="cell rel-grey tooltip" data-col="naemniki" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Монолит — главный враг">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="military" data-tip="Официальный нейтралитет">🟡</td>
+<td class="cell rel-green tooltip" data-col="uchenye" data-tip="Учёные — ключевые союзники">🟢</td>
+<td class="cell rel-yellow tooltip" data-col="odinochki" data-tip="Нейтральны, иногда вербуют">🟡</td>
+</tr>
+<tr data-faction="dolg">
+<th class="row-header">Долг <span class="tag tag-cn">ЧН</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Дезертиры — враги Долга">🔴</td>
+<td class="cell rel-grey tooltip" data-col="iig" data-tip="Нет прямого контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="Монолит — главный враг">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="angels" data-tip="Уважение, разные методы">🟡</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Мутанты — враги Долга">🔴</td>
+<td class="cell rel-red tooltip" data-col="greh" data-tip="Долг активно истребляет Грех">🔴</td>
+<td class="cell rel-green tooltip" data-col="hunters" data-tip="Союзники Охотников">🟢</td>
+<td class="cell rel-grey tooltip" data-col="lastday" data-tip="Нет прямого контакта">⚫</td>
+<td class="cell rel-yellow tooltip" data-col="peacekeepers" data-tip="Союзники по периметру">🟡</td>
+<td class="cell rel-green tooltip" data-col="alpha" data-tip="Долг нанимает Альфу">🟢</td>
+<td class="cell rel-yellow tooltip" data-col="cn" data-tip="Уважение, сотрудничество">🟡</td>
+<td class="cell self" data-col="dolg">—</td>
+<td class="cell rel-red tooltip" data-col="svoboda" data-tip="Идеологические враги">🔴</td>
+<td class="cell rel-red tooltip" data-col="renegaty" data-tip="Ренегаты — враги порядка">🔴</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Бандиты — враги">🔴</td>
+<td class="cell rel-red tooltip" data-col="naemniki" data-tip="Наёмники — угроза порядку">🔴</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Монолит — главный враг">🔴</td>
+<td class="cell rel-green tooltip" data-col="military" data-tip="Союзники украинских военных">🟢</td>
+<td class="cell rel-yellow tooltip" data-col="uchenye" data-tip="Защищают учёных">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="odinochki" data-tip="Нейтральны, вербуют в свои ряды">🟡</td>
+</tr>
+<tr data-faction="svoboda">
+<th class="row-header">Свобода <span class="tag tag-cn">ЧН</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Варяги атакуют всех">🔴</td>
+<td class="cell rel-grey tooltip" data-col="iig" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="О-сознание — враг">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="angels" data-tip="Нейтралитет">🟡</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Мутанты опасны">🔴</td>
+<td class="cell rel-red tooltip" data-col="greh" data-tip="Культисты — против свободы">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="hunters" data-tip="Нейтральны">🟡</td>
+<td class="cell rel-grey tooltip" data-col="lastday" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-yellow tooltip" data-col="peacekeepers" data-tip="Официальный нейтралитет">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="alpha" data-tip="Нейтралитет">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="cn" data-tip="Нейтральны">🟡</td>
+<td class="cell rel-red tooltip" data-col="dolg" data-tip="Идеологические враги">🔴</td>
+<td class="cell self" data-col="svoboda">—</td>
+<td class="cell rel-yellow tooltip" data-col="renegaty" data-tip="Ситуативная анархия — близки духом">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="bandity" data-tip="Ситуативное сотрудничество">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="naemniki" data-tip="Нейтралитет">🟡</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Монолит — враг свободы">🔴</td>
+<td class="cell rel-red tooltip" data-col="military" data-tip="Военные преследуют Свободу">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="uchenye" data-tip="Нейтралитет">🟡</td>
+<td class="cell rel-green tooltip" data-col="odinochki" data-tip="Двери открыты — Свобода приветствует всех">🟢</td>
+</tr>
+<tr data-faction="renegaty">
+<th class="row-header">Ренегаты <span class="tag tag-cn">ЧН</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Оба дезертиры, но разные лагеря">🔴</td>
+<td class="cell rel-grey tooltip" data-col="iig" data-tip="ИИГ их не замечает">⚫</td>
+<td class="cell rel-grey tooltip" data-col="fantomu" data-tip="Фантомам они неинтересны">⚫</td>
+<td class="cell rel-red tooltip" data-col="angels" data-tip="Ангелы против дезертиров">🔴</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Мутанты атакуют всех">🔴</td>
+<td class="cell rel-grey tooltip" data-col="greh" data-tip="Культисты им не нужны">⚫</td>
+<td class="cell rel-red tooltip" data-col="hunters" data-tip="Охотники против ренегатов">🔴</td>
+<td class="cell rel-grey tooltip" data-col="lastday" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="peacekeepers" data-tip="Миротворцы их преследуют">🔴</td>
+<td class="cell rel-red tooltip" data-col="alpha" data-tip="Ренегаты создают лишний шум">🔴</td>
+<td class="cell rel-red tooltip" data-col="cn" data-tip="ЧН — их бывшие братья, теперь враги">🔴</td>
+<td class="cell rel-red tooltip" data-col="dolg" data-tip="Долг против всех дезертиров">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="svoboda" data-tip="Ситуативная анархия">🟡</td>
+<td class="cell self" data-col="renegaty">—</td>
+<td class="cell rel-yellow tooltip" data-col="bandity" data-tip="Ситуативный контакт">🟡</td>
+<td class="cell rel-grey tooltip" data-col="naemniki" data-tip="Нет прямого контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Монолит враждебен всем">🔴</td>
+<td class="cell rel-red tooltip" data-col="military" data-tip="Дезертиры из ЧН">🔴</td>
+<td class="cell rel-red tooltip" data-col="uchenye" data-tip="Ренегаты грабят всех">🔴</td>
+<td class="cell rel-red tooltip" data-col="odinochki" data-tip="Одиночки — лёгкая добыча">🔴</td>
+</tr>
+<tr data-faction="bandity">
+<th class="row-header">Бандиты <span class="tag tag-cn">ЧН</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Варяги презирают бандитов">🔴</td>
+<td class="cell rel-red tooltip" data-col="iig" data-tip="ИИГ ликвидирует как свидетелей">🔴</td>
+<td class="cell rel-grey tooltip" data-col="fantomu" data-tip="Бандиты не интересны">⚫</td>
+<td class="cell rel-red tooltip" data-col="angels" data-tip="Ангелы против бандитов">🔴</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Мутанты атакуют всех">🔴</td>
+<td class="cell rel-red tooltip" data-col="greh" data-tip="Боятся Греха">🔴</td>
+<td class="cell rel-red tooltip" data-col="hunters" data-tip="Главные враги Охотников">🔴</td>
+<td class="cell rel-red tooltip" data-col="lastday" data-tip="Угроза для ПД">🔴</td>
+<td class="cell rel-red tooltip" data-col="peacekeepers" data-tip="Миротворцы их зачищают">🔴</td>
+<td class="cell rel-red tooltip" data-col="alpha" data-tip="Альфа их уничтожает">🔴</td>
+<td class="cell rel-red tooltip" data-col="cn" data-tip="ЧН против бандитов">🔴</td>
+<td class="cell rel-red tooltip" data-col="dolg" data-tip="Долг их истребляет">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="svoboda" data-tip="Ситуативное сотрудничество">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="renegaty" data-tip="Ситуативный контакт">🟡</td>
+<td class="cell self" data-col="bandity">—</td>
+<td class="cell rel-yellow tooltip" data-col="naemniki" data-tip="Чёрный рынок">🟡</td>
+<td class="cell rel-grey tooltip" data-col="monolit" data-tip="Монолит безразличен">⚫</td>
+<td class="cell rel-red tooltip" data-col="military" data-tip="Военные их преследуют">🔴</td>
+<td class="cell rel-red tooltip" data-col="uchenye" data-tip="Грабят учёных">🔴</td>
+<td class="cell rel-red tooltip" data-col="odinochki" data-tip="Основная жертва бандитов">🔴</td>
+</tr>
+<tr data-faction="naemniki">
+<th class="row-header">Наёмники <span class="tag tag-cn">ЧН</span></th>
+<td class="cell rel-yellow tooltip" data-col="varyagi" data-tip="Ситуативно">🟡</td>
+<td class="cell rel-green tooltip" data-col="iig" data-tip="ИИГ нанимает наёмников">🟢</td>
+<td class="cell rel-q tooltip" data-col="fantomu" data-tip="Фантомы — бывшие наёмники?">❓</td>
+<td class="cell rel-grey tooltip" data-col="angels" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Мутанты опасны">🔴</td>
+<td class="cell rel-grey tooltip" data-col="greh" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-grey tooltip" data-col="hunters" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-grey tooltip" data-col="lastday" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="peacekeepers" data-tip="Миротворцы подозревают">🔴</td>
+<td class="cell rel-green tooltip" data-col="alpha" data-tip="Альфа нанимает наёмников">🟢</td>
+<td class="cell rel-grey tooltip" data-col="cn" data-tip="Нет прямого контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="dolg" data-tip="Долг против наёмников">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="svoboda" data-tip="Нейтралитет">🟡</td>
+<td class="cell rel-grey tooltip" data-col="renegaty" data-tip="Нет прямого контакта">⚫</td>
+<td class="cell rel-yellow tooltip" data-col="bandity" data-tip="Чёрный рынок">🟡</td>
+<td class="cell self" data-col="naemniki">—</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Монолит враждебен всем">🔴</td>
+<td class="cell rel-red tooltip" data-col="military" data-tip="Военные против наёмников">🔴</td>
+<td class="cell rel-grey tooltip" data-col="uchenye" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="odinochki" data-tip="Одиночки могут быть целью контракта">🔴</td>
+</tr>
+<tr data-faction="monolit">
+<th class="row-header">Монолит <span class="tag tag-cn">ЧН</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Враждебны ко всем">🔴</td>
+<td class="cell rel-red tooltip" data-col="iig" data-tip="ИИГ угрожает О-сознанию">🔴</td>
+<td class="cell rel-green tooltip" data-col="fantomu" data-tip="Фантомы служат О-сознанию">🟢</td>
+<td class="cell rel-red tooltip" data-col="angels" data-tip="Ангелы против О-сознания">🔴</td>
+<td class="cell rel-green tooltip" data-col="dark" data-tip="Тёмные Сталкеры помогают Монолиту">🟢</td>
+<td class="cell rel-red tooltip" data-col="greh" data-tip="Религиозная война с Грехом">🔴</td>
+<td class="cell rel-red tooltip" data-col="hunters" data-tip="Враждебны">🔴</td>
+<td class="cell rel-red tooltip" data-col="lastday" data-tip="ПД исследует О-сознание">🔴</td>
+<td class="cell rel-red tooltip" data-col="peacekeepers" data-tip="Враждебны ко всем военным">🔴</td>
+<td class="cell rel-red tooltip" data-col="alpha" data-tip="Альфа лезет в лаборатории">🔴</td>
+<td class="cell rel-red tooltip" data-col="cn" data-tip="ЧН — главный враг">🔴</td>
+<td class="cell rel-red tooltip" data-col="dolg" data-tip="Долг — главный враг">🔴</td>
+<td class="cell rel-red tooltip" data-col="svoboda" data-tip="Свобода против Монолита">🔴</td>
+<td class="cell rel-red tooltip" data-col="renegaty" data-tip="Ренегаты — мусор">🔴</td>
+<td class="cell rel-grey tooltip" data-col="bandity" data-tip="Бандиты безразличны">⚫</td>
+<td class="cell rel-red tooltip" data-col="naemniki" data-tip="Наёмники — враги">🔴</td>
+<td class="cell self" data-col="monolit">—</td>
+<td class="cell rel-red tooltip" data-col="military" data-tip="Военные — враги">🔴</td>
+<td class="cell rel-red tooltip" data-col="uchenye" data-tip="Учёные угрожают О-сознанию">🔴</td>
+<td class="cell rel-red tooltip" data-col="odinochki" data-tip="Враждебны всем людям">🔴</td>
+</tr>
+<tr data-faction="military">
+<th class="row-header">Военные (Украина) <span class="tag tag-cn">ЧН</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Дезертиры">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="iig" data-tip="Осторожный нейтралитет">🟡</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="Монолит опасен">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="angels" data-tip="Нейтралитет">🟡</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Мутанты опасны">🔴</td>
+<td class="cell rel-red tooltip" data-col="greh" data-tip="Преследуют Грех">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="hunters" data-tip="Нейтральны">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="lastday" data-tip="Нейтральны">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="peacekeepers" data-tip="Союзники по мандату ООН">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="alpha" data-tip="Бывшие коллеги">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="cn" data-tip="Официальный нейтралитет">🟡</td>
+<td class="cell rel-green tooltip" data-col="dolg" data-tip="Союзники">🟢</td>
+<td class="cell rel-red tooltip" data-col="svoboda" data-tip="Свобода против военных">🔴</td>
+<td class="cell rel-red tooltip" data-col="renegaty" data-tip="Ренегаты — дезертиры из ЧН, враги">🔴</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Преследуют бандитов">🔴</td>
+<td class="cell rel-red tooltip" data-col="naemniki" data-tip="Наёмники — незаконны">🔴</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Монолит — угроза">🔴</td>
+<td class="cell self" data-col="military">—</td>
+<td class="cell rel-yellow tooltip" data-col="uchenye" data-tip="Защищают учёных официально">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="odinochki" data-tip="Прогоняют от периметра, иначе нейтральны">🟡</td>
+</tr>
+<tr data-faction="uchenye">
+<th class="row-header">Учёные <span class="tag tag-cn">ЧН</span></th>
+<td class="cell rel-grey tooltip" data-col="varyagi" data-tip="Не интересны Варягам">⚫</td>
+<td class="cell rel-yellow tooltip" data-col="iig" data-tip="ИИГ интересуется данными">🟡</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="О-сознание против науки">🔴</td>
+<td class="cell rel-green tooltip" data-col="angels" data-tip="Союзники по знанию">🟢</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Мутанты опасны">🔴</td>
+<td class="cell rel-grey tooltip" data-col="greh" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-yellow tooltip" data-col="hunters" data-tip="Охотники защищают периметр">🟡</td>
+<td class="cell rel-green tooltip" data-col="lastday" data-tip="ПД изучает их работу">🟢</td>
+<td class="cell rel-yellow tooltip" data-col="peacekeepers" data-tip="Миротворцы их охраняют">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="alpha" data-tip="Альфа использует их данные">🟡</td>
+<td class="cell rel-green tooltip" data-col="cn" data-tip="ЧН защищает учёных">🟢</td>
+<td class="cell rel-yellow tooltip" data-col="dolg" data-tip="Долг защищает учёных">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="svoboda" data-tip="Свобода нейтральна">🟡</td>
+<td class="cell rel-red tooltip" data-col="renegaty" data-tip="Ренегаты их грабят">🔴</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Бандиты их грабят">🔴</td>
+<td class="cell rel-grey tooltip" data-col="naemniki" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Монолит угрожает науке">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="military" data-tip="Военные их охраняют">🟡</td>
+<td class="cell self" data-col="uchenye">—</td>
+<td class="cell rel-yellow tooltip" data-col="odinochki" data-tip="Нанимают как проводников и охрану">🟡</td>
+</tr>
+<tr data-faction="odinochki">
+<th class="row-header">Одиночки <span class="tag tag-cn">ЧН</span></th>
+<td class="cell rel-red tooltip" data-col="varyagi" data-tip="Варяги нападают ради демонстрации силы">🔴</td>
+<td class="cell rel-grey tooltip" data-col="iig" data-tip="Об ИИГ не знают">⚫</td>
+<td class="cell rel-red tooltip" data-col="fantomu" data-tip="Фантомы опасны">🔴</td>
+<td class="cell rel-green tooltip" data-col="angels" data-tip="Падшие Ангелы помогают нейтральным сталкерам">🟢</td>
+<td class="cell rel-red tooltip" data-col="dark" data-tip="Тёмные Сталкеры атакуют всех">🔴</td>
+<td class="cell rel-red tooltip" data-col="greh" data-tip="Грех охотится на одиночек">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="hunters" data-tip="Коллеги по выживанию">🟡</td>
+<td class="cell rel-grey tooltip" data-col="lastday" data-tip="Нет контакта">⚫</td>
+<td class="cell rel-yellow tooltip" data-col="peacekeepers" data-tip="Миротворцы нейтральны">🟡</td>
+<td class="cell rel-grey tooltip" data-col="alpha" data-tip="Об Альфе не знают">⚫</td>
+<td class="cell rel-yellow tooltip" data-col="cn" data-tip="ЧН нейтральны, иногда вербуют">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="dolg" data-tip="Долг нейтрален, вербует">🟡</td>
+<td class="cell rel-green tooltip" data-col="svoboda" data-tip="Свобода принимает всех">🟢</td>
+<td class="cell rel-red tooltip" data-col="renegaty" data-tip="Ренегаты грабят одиночек">🔴</td>
+<td class="cell rel-red tooltip" data-col="bandity" data-tip="Бандиты охотятся на одиночек">🔴</td>
+<td class="cell rel-red tooltip" data-col="naemniki" data-tip="Наёмники могут быть наняты против них">🔴</td>
+<td class="cell rel-red tooltip" data-col="monolit" data-tip="Монолит враждебен всем">🔴</td>
+<td class="cell rel-yellow tooltip" data-col="military" data-tip="Военные прогоняют от периметра">🟡</td>
+<td class="cell rel-yellow tooltip" data-col="uchenye" data-tip="Учёные нанимают как проводников">🟡</td>
+<td class="cell self" data-col="odinochki">—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section-title">// КЛЮЧЕВЫЕ КОНФЛИКТЫ И СОЮЗЫ</div>
+<div class="conflicts">
+<div class="note hostile"><strong>⚔️ АЛЬФА vs ИИГ</strong>Оба охотятся за лабораториями серии X. ИИГ однажды попыталась ликвидировать группу Призмы как свидетелей. С тех пор — взаимная ликвидация при встрече.</div>
+<div class="note hostile"><strong>☠️ МОНОЛИТ + ФАНТОМЫ + ТЁМНЫЕ СТАЛКЕРЫ</strong>Три лица О-сознания. Монолит — тело, Тёмные Сталкеры — хаотичное прикрытие, Фантомы — хирургический удар. Действуют скоординированно.</div>
+<div class="note hostile"><strong>✝️ ГРЕХ vs МОНОЛИТ</strong>Религиозная война на уничтожение. Оба верят в Зону — но в разных богов. Встреча неизбежно заканчивается кровью.</div>
+<div class="note hostile"><strong>🔫 ДОЛГ vs СВОБОДА</strong>Дисциплина против анархии. В войне 2010–2011 конфликт обострился до предела: каждый считает другого главным тормозом на пути к победе над Монолитом.</div>
+<div class="note hostile"><strong>🗡️ ЧИСТОЕ НЕБО vs РЕНЕГАТЫ</strong>Самый личный конфликт. Ренегаты — бывшие члены ЧН. Для ЧН это позор и открытая рана. Ренегаты считают, что ЧН предало их первым.</div>
+<div class="note hostile"><strong>☢️ МИРОТВОРЦЫ vs ЧВК АЛЬФА</strong>США и российские операторы в одной зоне интересов. Оба нацелены на секретные объекты. Когда сталкиваются — дипломатии нет.</div>
+<div class="note hostile"><strong>🪖 ДОЛГ vs РЕНЕГАТЫ</strong>Для Долга ренегаты — символ слабости и хаоса. Долговцы охотятся на них с особым рвением — как на дезертиров перед строем.</div>
+<div class="note neutral"><strong>🟡 АЛЬФА vs ПОСЛЕДНИЙ ДЕНЬ</strong>Призма знает, что у ПД есть архивы по лабораториям X. Пока не решил: украсть, купить или договориться.</div>
+<div class="note neutral"><strong>🟡 ИИГ + МИРОТВОРЦЫ (США)</strong>Официально не знают друг о друге. Неофициально делят разведданные. Конкурируют за политическое влияние — это рано или поздно выплеснется.</div>
+<div class="note neutral"><strong>🟡 ГРЕХ + ПОСЛЕДНИЙ ДЕНЬ</strong>Оба изучают зомбированных сталкеров — одни ради науки, другие ради ритуалов. Никогда не встречаются лично, но информация иногда течёт в обе стороны.</div>
+<div class="note neutral"><strong>🟡 СВОБОДА и РЕНЕГАТЫ</strong>Не союзники, но и не враги. «Сегодня не стреляем, завтра — как выйдет».</div>
+<div class="note positive"><strong>🟢 ПАДШИЕ АНГЕЛЫ + ПОСЛЕДНИЙ ДЕНЬ</strong>Единственный крепкий союз вне стандартных фракций. Совместные операции, общий архив данных.</div>
+<div class="note positive"><strong>🟢 ДОЛГ + ЧВК АЛЬФА</strong>Долг нанимает Альфу для операций, которые нельзя провести официально. Один из самых устойчивых союзов в Зоне.</div>
+<div class="note positive"><strong>🟢 ЧИСТОЕ НЕБО + ПАДШИЕ АНГЕЛЫ + УЧЁНЫЕ</strong>Треугольник знания. Все трое верят: понять Зону — значит спасти мир. Самый уязвимый союз — разрушить его проще, чем военный.</div>
+<div class="note mystery"><strong>❓ ФАНТОМЫ + ГРЕХ + ТЁМНЫЕ СТАЛКЕРЫ</strong>Три фракции тьмы. Монолит их объединяет — или нет? Грех ненавидит Монолит. Что произойдёт при встрече всех трёх в одном тоннеле — не знает никто.</div>
+</div>
+</div>
+<!-- ===== ДОСЬЕ ГРУППИРОВОК ===== -->
+<div class="section" id="section-factions">
+<div class="factions-grid" style="padding-top:20px;">
+<div class="faction-card new-faction">
+<div class="fc-header"><h3>Варяги</h3><span class="fc-type">Global War</span></div>
+<div class="fc-chips"><span class="chip r">Враждебны почти всем</span><span class="chip y">Дезертиры</span><span class="chip">Культ силы</span></div>
+<div class="fc-desc"><p>Группировка дезертиров и предателей, преимущественно из военных. Идеология построена на культе силы: <em>«Победа измеряется кровью — твоей или твоего врага»</em>. Промышляют нападениями на хорошо защищённые цели ради демонстрации. Презирают бандитов.</p></div>
+<div class="fc-hook">Единственная фракция, способная принять достойного противника в свои ряды — если тот докажет силу в бою.</div>
+</div>
+<div class="faction-card new-faction">
+<div class="fc-header"><h3>ИИГ</h3><span class="fc-type">Global War / Великая Война</span></div>
+<div class="fc-chips"><span class="chip y">Нелегальная операция</span><span class="chip p">Шпионаж</span><span class="chip">ООН / США</span></div>
+<div class="fc-desc"><p>Восстановлена через ООН. Украина не дала разрешения — работают нелегально, ликвидируют свидетелей. Две стороны: исследователи и агенты. Цель — доказать, что Зона создана людьми, и инициировать международное расследование.</p></div>
+<div class="fc-hook">Кто из знакомых сталкеров — агент под прикрытием?</div>
+</div>
+<div class="faction-card new-faction">
+<div class="fc-header"><h3>Фантомы</h3><span class="fc-type">Global War / Тайные Тропы 2</span></div>
+<div class="fc-chips"><span class="chip r">Элита О-сознания</span><span class="chip">Зелёные экзоскелеты / ВАЛ</span><span class="chip">Лидер: Мираж</span></div>
+<div class="fc-desc"><p>«Сторожевые псы» О-сознания. Каждый боец — мастер. Проводят спецоперации Монолита за пределами ЧАЭС. База в Припяти, у статуи Ленина. Их почти никто не видел живыми — и это не случайность.</p></div>
+<div class="fc-hook">Встреча с Фантомом — это задание от Миража или смерть. Третьего не бывает.</div>
+</div>
+<div class="faction-card new-faction">
+<div class="fc-header"><h3>Падшие Ангелы</h3><span class="fc-type">Global War</span></div>
+<div class="fc-chips"><span class="chip g">Альтруисты</span><span class="chip y">Разведка / контроль</span><span class="chip">Элитное снаряжение</span></div>
+<div class="fc-desc"><p>Дисциплинированное подразделение, сформированное в условиях Зоны. Собирают информацию, противодействуют враждебным фракциям, помогают нейтральным сталкерам. В войне — единственные, кто пытается договариваться.</p></div>
+<div class="fc-hook">Могут выступить посредниками между враждующими сторонами — но у посредников тоже есть своя цена.</div>
+</div>
+<div class="faction-card new-faction">
+<div class="fc-header"><h3>Тёмные Сталкеры</h3><span class="fc-type">Global War / Великая Война</span></div>
+<div class="fc-chips"><span class="chip r">Атакуют всех</span><span class="chip p">Полумутанты</span><span class="chip">Центр Зоны</span></div>
+<div class="fc-desc"><p>Беглецы из экспериментальных лабораторий. Обитают в центре Зоны, помогают Монолиту. Мутанты их не трогают. Служат «родителям», которые пообещали переделать мир для мутантов.</p></div>
+<div class="fc-hook">С ними можно говорить — если знаешь нужные слова. Мало кто их знает.</div>
+</div>
+<div class="faction-card new-faction">
+<div class="fc-header"><h3>Грех</h3><span class="fc-type">Global War</span></div>
+<div class="fc-chips"><span class="chip p">Культ / Сатанизм</span><span class="chip r">Жертвоприношения</span><span class="chip">Полузомби</span></div>
+<div class="fc-desc"><p>Полузомбированные сталкеры. Верят в Зону как последнее искупление человечества. Культ с обрядами жертвоприношений. Преследуются Долгом. Ведут религиозную войну с Монолитом.</p></div>
+<div class="fc-hook">Их обряды могут содержать реальное знание о природе Зоны — но цена пугает даже опытных.</div>
+</div>
+<div class="faction-card new-faction">
+<div class="fc-header"><h3>Охотники</h3><span class="fc-type">Global War / Народная Солянка</span></div>
+<div class="fc-chips"><span class="chip g">Союзники Долга</span><span class="chip y">Охота на мутантов</span><span class="chip">Кордон / Свалка</span></div>
+<div class="fc-desc"><p>Бывшие браконьеры. Малочисленны, но исключительно боеспособны. Знают местность лучше любой другой группировки. Уничтожают мутантов, продают трофеи. Пользуются уважением среди сталкеров.</p></div>
+<div class="fc-hook">Нужна разведка или выслеживание конкретного человека — умеют работать тихо.</div>
+</div>
+<div class="faction-card new-faction">
+<div class="fc-header"><h3>Последний День</h3><span class="fc-type">Global War / Мёртвый Город</span></div>
+<div class="fc-chips"><span class="chip p">Апокалиптики</span><span class="chip y">Исследователи зомби</span><span class="chip">Болота</span></div>
+<div class="fc-desc"><p>Считают, что Зона скоро поглотит несколько стран. Изучают зомбированных сталкеров, шпионят за лабораторией Сахарова. Их архивы могут содержать доказательства того, что кто-то намеренно расширяет Зону.</p></div>
+<div class="fc-hook">У них есть данные, которые меняют всё — но они не торопятся делиться.</div>
+</div>
+<div class="faction-card new-faction">
+<div class="fc-header"><h3>Миротворцы (США)</h3><span class="fc-type">Global War / Тайные Тропы 2</span></div>
+<div class="fc-chips"><span class="chip y">ООН / США</span><span class="chip">Морская пехота / JB</span><span class="chip">Авиабаза / Предбанник</span></div>
+<div class="fc-desc"><p>Смешанный батальон США по мандату ООН. Официально — охрана периметра. Контролируют Предбанник и авиабазу. Синяя форма, перекрашенный «Берилл». Их настоящие приказы никто не знает.</p></div>
+<div class="fc-hook">С ними можно говорить официально — но их реальные цели в Зоне другие.</div>
+</div>
+<div class="faction-card new-faction">
+<div class="fc-header"><h3>ЧВК «Альфа»</h3><span class="fc-type">Global War</span></div>
+<div class="fc-chips"><span class="chip r">Ликвидируют свидетелей</span><span class="chip y">Контракты / Лаборатории X</span><span class="chip">База: Тёмная Долина</span></div>
+<div class="fc-desc"><p>Отколовшееся подразделение «Альфы» ФСБ. После конфликта с командованием — действуют в собственных интересах. Малые ячейки по 4–8 человек, не оставляют следов. Командир — <strong>Парсек</strong>. Матовый антрацит, никаких знаков различия.</p></div>
+<div class="fc-hook">Что Парсек видел в Зоне до Второго Выброса — и почему вернулся?</div>
+</div>
+<div class="faction-card cn-faction">
+<div class="fc-header"><h3>Чистое Небо</h3><span class="fc-type">Стандартная / ЧН</span></div>
+<div class="fc-chips"><span class="chip g">Учёные-идеалисты</span><span class="chip y">Изучение Зоны</span><span class="chip">Болота</span></div>
+<div class="fc-desc"><p>Верят, что Зона поддаётся пониманию. Конфликт с Ренегатами — самый личный: те бывшие члены ЧН, предавшие идеалы братства. Стабилизирующая сила в войне — единственные, кто пытается понять, а не просто выжить.</p></div>
+<div class="fc-hook">Знают о Зоне больше, чем говорят. Вопрос — что скрывают и зачем.</div>
+</div>
+<div class="faction-card cn-faction">
+<div class="fc-header"><h3>Долг</h3><span class="fc-type">Стандартная / ЧН</span></div>
+<div class="fc-chips"><span class="chip r">Война с Монолитом</span><span class="chip r">Враги Свободы</span><span class="chip y">Железная дисциплина</span></div>
+<div class="fc-desc"><p>Военизированная группировка. Железная иерархия, приказы не обсуждаются. В 2010–2011 усилили активность. Нанимают ЧВК Альфу для «деликатных» операций. Союзники Охотников и украинских военных.</p></div>
+<div class="fc-hook">Приказы сверху иногда противоречат совести снизу. Где заканчивается долг — и начинается человек?</div>
+</div>
+<div class="faction-card cn-faction">
+<div class="fc-header"><h3>Свобода</h3><span class="fc-type">Стандартная / ЧН</span></div>
+<div class="fc-chips"><span class="chip g">Открытая Зона</span><span class="chip r">Враги Долга</span><span class="chip y">Анархо-идеализм</span></div>
+<div class="fc-desc"><p>Верят, что Зона принадлежит всем. Шумные, непредсказуемые, иногда эффективные. С Ренегатами не воюют — ситуативная анархия иногда рифмуется. С Долгом — на ножах.</p></div>
+<div class="fc-hook">Свобода — красивое слово. Но когда Зона горит, кто-то должен принимать жёсткие решения.</div>
+</div>
+<div class="faction-card cn-faction">
+<div class="fc-header"><h3>Ренегаты</h3><span class="fc-type">Стандартная / ЧН</span></div>
+<div class="fc-chips"><span class="chip r">Предатели ЧН</span><span class="chip y">Дезертиры</span><span class="chip">Болота</span></div>
+<div class="fc-desc"><p>Бывшие члены Чистого Неба. Для ЧН — позор. Для самих ренегатов — ЧН предало их первым. Оба правы, и никто не простит. В войне — ситуативные союзники бандитов и иногда Свободы.</p></div>
+<div class="fc-hook">Каждый ренегат — это история предательства. Чья версия правды ближе к истине?</div>
+</div>
+<div class="faction-card cn-faction">
+<div class="fc-header"><h3>Бандиты</h3><span class="fc-type">Стандартная / ЧН</span></div>
+<div class="fc-chips"><span class="chip r">Враги почти всех</span><span class="chip y">Чёрный рынок</span><span class="chip">Периферия Зоны</span></div>
+<div class="fc-desc"><p>Дно Зоны. Грабят, убивают слабых. В войне — мародёры. Связаны с наёмниками через чёрный рынок. Боятся Греха больше, чем военных.</p></div>
+<div class="fc-hook">У бандитов есть информация — они видят всё на периферии. Цена за неё всегда неприятная.</div>
+</div>
+<div class="faction-card cn-faction">
+<div class="fc-header"><h3>Наёмники</h3><span class="fc-type">Стандартная / ЧН</span></div>
+<div class="fc-chips"><span class="chip y">Работают на всех</span><span class="chip">Хорошее снаряжение</span><span class="chip p">Неизвестные наниматели</span></div>
+<div class="fc-desc"><p>Профессионалы без флага. Работают на ИИГ, Альфу, иногда Долг. Связь с Фантомами — под вопросом: возможно, Фантомы это наёмники, принявшие особый контракт.</p></div>
+<div class="fc-hook">Кто стоит за конкретным отрядом — и каков настоящий контракт?</div>
+</div>
+<div class="faction-card cn-faction">
+<div class="fc-header"><h3>Монолит</h3><span class="fc-type">Стандартная / ЧН</span></div>
+<div class="fc-chips"><span class="chip r">Враждебны всем</span><span class="chip p">О-сознание</span><span class="chip">ЧАЭС / Саркофаг</span></div>
+<div class="fc-desc"><p>Зомбированные солдаты О-сознания. Не договариваются, не берут пленных, не отступают. Реальные операции ведут Фантомы и Тёмные Сталкеры — Монолит это фасад. В войне Монолит — не участник. Это стена.</p></div>
+<div class="fc-hook">Что О-сознание хочет от Зоны на самом деле?</div>
+</div>
+<div class="faction-card cn-faction">
+<div class="fc-header"><h3>Военные (Украина)</h3><span class="fc-type">Стандартная / ЧН</span></div>
+<div class="fc-chips"><span class="chip y">Официальный периметр</span><span class="chip g">Союзники Долга</span><span class="chip">Кордон / Блокпосты</span></div>
+<div class="fc-desc"><p>Регулярная армия Украины. Официально нейтральны к большинству группировок. Координируются с Долгом и Миротворцами. К ЧВК Альфа — осторожно: бывшие коллеги, но теперь по другую сторону.</p></div>
+<div class="fc-hook">У каждого офицера есть приказы. И есть совесть. Они не всегда совпадают.</div>
+</div>
+<div class="faction-card cn-faction">
+<div class="fc-header"><h3>Учёные</h3><span class="fc-type">Стандартная / ЧН</span></div>
+<div class="fc-chips"><span class="chip g">Нейтральны</span><span class="chip y">Янтарь / Базы</span><span class="chip">Знание = защита</span></div>
+<div class="fc-desc"><p>Единственные, чья нейтральность почти всеми уважается. Сахаров знает о Зоне больше, чем любая фракция. ИИГ и Последний День шпионят за ними. ЧВК Альфа использует их данные.</p></div>
+<div class="fc-hook">Данные в архивах Сахарова могут изменить расстановку сил. Кто получит их первым?</div>
+</div>
+</div>
+</div>
+<!-- ===== ДОСЬЕ ПРИЗМА ===== -->
+<div class="section" id="section-locations">
+<style>
+.loc-filter {
+  display: flex; gap: 8px; flex-wrap: wrap; padding: 14px 20px;
+  background: var(--bg2); border-bottom: 1px solid var(--border); align-items: center;
+}
+.loc-filter label { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; margin-right: 4px; }
+.loc-btn {
+  font-family: 'Oswald', sans-serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-dim); background: rgba(255,255,255,.03); border: 1px solid var(--border);
+  padding: 5px 12px; cursor: pointer; transition: all .15s; border-radius: 2px;
+}
+.loc-btn:hover { color: var(--text); border-color: var(--border-bright); }
+.loc-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(93,186,96,.08); }
+.loc-btn.zone-restricted { border-color: rgba(192,57,43,.4); color: #c0392b; }
+.loc-btn.zone-restricted.active { background: rgba(192,57,43,.1); }
+
+.loc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 13px;
+  padding: 20px 20px 50px;
+}
+
+.loc-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-top: none;
+  padding: 14px 16px 16px; position: relative;
+  transition: background .2s, box-shadow .2s;
+}
+/* угловые скобки — тактический маркер */
+.loc-card::before, .loc-card::after {
+  content: ''; position: absolute;
+  width: 10px; height: 10px;
+  border-color: var(--border-bright);
+  border-style: solid;
+  transition: border-color .2s;
+}
+.loc-card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.loc-card::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+.loc-card:hover::before, .loc-card:hover::after { border-color: var(--accent); }
+.loc-card:hover { background: #111710; box-shadow: inset 0 0 30px rgba(0,0,0,.3); }
+.loc-card.zone-south::before,   .loc-card.zone-south::after   { border-color: rgba(76,175,80,.6); }
+.loc-card.zone-center::before,  .loc-card.zone-center::after  { border-color: rgba(200,162,39,.6); }
+.loc-card.zone-lab::before,     .loc-card.zone-lab::after     { border-color: rgba(155,89,182,.6); }
+.loc-card.zone-restricted::before, .loc-card.zone-restricted::after { border-color: rgba(192,57,43,.7); }
+.loc-card.psi-zone::before, .loc-card.psi-zone::after          { border-color: rgba(155,89,182,.6); }
+.loc-card.underground-card::before, .loc-card.underground-card::after { border-color: rgba(74,82,73,.7); }
+.loc-card.hidden { display: none; }
+
+.loc-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.loc-name {
+  font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 600;
+  color: var(--header); letter-spacing: 2px; text-transform: uppercase; line-height: 1.1;
+}
+.loc-badge {
+  font-size: 9px; padding: 2px 6px; border-radius: 2px; flex-shrink: 0;
+  font-family: 'Share Tech Mono', monospace; letter-spacing: 0.5px;
+}
+.badge-south  { background: rgba(76,175,80,.12); color: #7ec880; border: 1px solid rgba(76,175,80,.3); }
+.badge-center { background: rgba(200,162,39,.1); color: #c8a227; border: 1px solid rgba(200,162,39,.3); }
+.badge-lab    { background: rgba(155,89,182,.12); color: #bb87d8; border: 1px solid rgba(155,89,182,.3); }
+.badge-restricted { background: rgba(192,57,43,.12); color: #e07060; border: 1px solid rgba(192,57,43,.4); }
+
+.loc-danger {
+  font-size: 9px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 9px;
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+.loc-danger span { display: flex; align-items: center; gap: 4px; }
+
+.loc-desc { font-size: 11px; line-height: 1.7; color: var(--text-dim); margin-bottom: 10px; }
+.loc-desc p { margin-bottom: 5px; }
+.loc-desc p:last-child { margin-bottom: 0; }
+
+.loc-points { border-top: 1px solid var(--border); padding-top: 9px; margin-top: 2px; }
+.loc-points-title { font-size: 9px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+.loc-point { font-size: 10px; color: var(--text-dim); line-height: 1.6; padding-left: 10px; position: relative; margin-bottom: 2px; }
+.loc-point::before { content: '·'; position: absolute; left: 0; color: var(--accent); }
+
+.loc-restricted-bar {
+  background: rgba(192,57,43,.12); border: 1px solid rgba(192,57,43,.3);
+  color: #e07060; font-size: 10px; letter-spacing: 1px; padding: 6px 10px;
+  margin-bottom: 10px; line-height: 1.5;
+}
+
+.loc-factions {
+  margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--border);
+  font-size: 10px; color: var(--text-dim); font-style: italic; letter-spacing: 0.5px;
+}
+</style>
+<div class="loc-filter">
+<label>Зона:</label>
+<button class="loc-btn active" onclick="filterLoc('all',this)">Все</button>
+<button class="loc-btn zone-south" onclick="filterLoc('south',this)">▼ Юг</button>
+<button class="loc-btn zone-center" onclick="filterLoc('center',this)">◈ Центр</button>
+<button class="loc-btn" onclick="filterLoc('lab',this)">⬡ Подземные лаборатории</button>
+<button class="loc-btn zone-restricted" onclick="filterLoc('restricted',this)">⛔ Закрытая зона</button>
+</div>
+<div class="loc-grid"></div><!-- /loc-grid -->
+</div><!-- /section-locations -->
+<script>
+function filterLoc(zone, btn) {
+  document.querySelectorAll('.loc-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('.loc-card').forEach(card => {
+    if (zone === 'all' || card.getAttribute('data-zone') === zone) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+}
+</script>
+<!-- ===== ДОСЬЕ ПЕРСОНАЖЕЙ ===== -->
+<style>
+/* DOS — personnel files */
+.dos-filters{padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.dos-filters label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-right:2px;}
+
+.dos-group-title{
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:3px;
+  color:var(--text-dim);text-transform:uppercase;
+  padding:20px 20px 10px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+}
+.dos-group-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.dos-group-title.hidden{display:none;}
+
+.dos-group{
+  padding:10px 16px 4px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:8px;
+}
+
+/* CARD */
+.dos-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  display:grid;
+  grid-template-columns:4px 1fr;
+  overflow:hidden;
+  transition:background .2s;
+  position:relative;
+}
+.dos-card.hidden{display:none;}
+.dos-card:hover{background:rgba(16,20,15,1);}
+
+.dos-stripe{
+  background:var(--dc, var(--border-bright));
+  opacity:.6;
+  transition:opacity .2s;
+}
+.dos-card:hover .dos-stripe{opacity:1;}
+
+.dos-body{padding:11px 14px 12px;}
+
+.dos-header{display:flex;align-items:flex-start;gap:8px;margin-bottom:4px;}
+.dos-name{
+  font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;
+  color:var(--header);letter-spacing:2px;text-transform:uppercase;flex:1;line-height:1.2;
+}
+.dos-full{font-size:11px;font-weight:400;color:var(--text-dim);letter-spacing:1px;}
+.dos-badges{display:flex;flex-direction:column;gap:3px;align-items:flex-end;flex-shrink:0;}
+.dos-role-badge{
+  font-size:8px;padding:2px 6px;letter-spacing:1px;text-transform:uppercase;
+  background:var(--db,rgba(255,255,255,.05));border:1px solid var(--dc,var(--border));
+  color:var(--dc, var(--text-dim));font-family:'Share Tech Mono',monospace;white-space:nowrap;
+}
+.dos-faction-badge{
+  font-size:8px;padding:2px 6px;letter-spacing:1px;text-transform:uppercase;
+  background:rgba(255,255,255,.03);border:1px solid var(--fc,var(--border));
+  color:var(--fc,var(--text-dim));font-family:'Share Tech Mono',monospace;white-space:nowrap;
+}
+
+.dos-role-line{
+  font-size:10px;color:var(--text-dim);letter-spacing:.5px;
+  margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--border);
+}
+.dos-role-line em{color:var(--dc,var(--text-dim));font-style:normal;}
+
+.dos-fields{display:flex;flex-direction:column;gap:6px;}
+.dos-field{display:grid;grid-template-columns:120px 1fr;gap:6px;align-items:baseline;}
+.dos-fl{
+  font-size:9px;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;
+  font-family:'Share Tech Mono',monospace;line-height:1.5;padding-top:1px;
+}
+.dos-fv{font-size:11px;color:var(--text-dim);line-height:1.65;}
+
+.dos-secret .dos-fl{color:rgba(192,57,43,.7);}
+.dos-secret .dos-fv{color:rgba(200,130,120,.85);}
+.dos-hook .dos-fl{color:rgba(93,186,96,.6);}
+.dos-hook .dos-fv{color:rgba(150,200,150,.85);}
+</style>
+<div class="section" id="section-dosye">
+<style>
+/* DOSSIER GRID */
+.dosye-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  padding: 24px 20px 16px;
+}
+
+/* CLOSED FOLDER */
+.dosye-folder {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--border-bright);
+  padding: 18px 16px 16px;
+  cursor: pointer;
+  transition: border-top-color .2s, background .2s;
+  position: relative;
+  user-select: none;
+}
+.dosye-folder:hover { border-top-color: var(--accent); background: #111511; }
+.dosye-folder.folder-pc { border-top-color: rgba(200,162,39,0.7); }
+.dosye-folder.folder-pc:hover { border-top-color: #c8a227; }
+.dosye-folder.folder-alpha { border-top-color: #c0392b; }
+.dosye-folder.folder-alpha:hover { border-top-color: #e74c3c; }
+
+.folder-stamp {
+  font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 10px;
+  border: 1px solid var(--border); display: inline-block; padding: 2px 6px;
+}
+.folder-codename {
+  font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700;
+  color: var(--header); letter-spacing: 3px; text-transform: uppercase;
+  line-height: 1.1; margin-bottom: 4px;
+}
+.folder-realname {
+  font-size: 10px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 12px;
+}
+.folder-hint {
+  font-size: 10px; color: var(--accent); letter-spacing: 1px; opacity: 0;
+  transition: opacity .2s;
+}
+.dosye-folder:hover .folder-hint { opacity: 1; }
+.folder-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.folder-chip {
+  font-size: 9px; padding: 2px 6px; border-radius: 2px;
+  background: rgba(255,255,255,.04); border: 1px solid var(--border); color: var(--text-dim);
+}
+
+/* OPEN DOSSIER OVERLAY */
+.dosye-overlay {
+  display: none;
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.85);
+  z-index: 500;
+  overflow-y: auto;
+  padding: 20px 12px 40px;
+}
+.dosye-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+
+.dosye-paper {
+  background: #0d120d;
+  border: 1px solid var(--border-bright);
+  border-top: 4px solid var(--accent);
+  max-width: 700px; width: 100%;
+  position: relative;
+  animation: unfold .3s ease-out both;
+  transform-origin: top center;
+}
+.dosye-paper.paper-alpha { border-top-color: #c0392b; }
+.dosye-paper.paper-pc    { border-top-color: #c8a227; }
+
+@keyframes unfold {
+  from { opacity: 0; transform: scaleY(.85) translateY(-20px); }
+  to   { opacity: 1; transform: scaleY(1)  translateY(0); }
+}
+
+.dosye-close {
+  position: absolute; top: 12px; right: 14px;
+  font-size: 18px; color: var(--text-dim); cursor: pointer;
+  background: none; border: none; font-family: 'Share Tech Mono', monospace;
+  transition: color .15s;
+}
+.dosye-close:hover { color: var(--accent); }
+
+/* PAPER CONTENT — reuse existing dossier classes */
+.dosye-paper .dossier { padding: 28px 28px 32px; }
+
+/* fold line decoration */
+.dosye-paper::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: repeating-linear-gradient(90deg, var(--border-bright) 0, var(--border-bright) 6px, transparent 6px, transparent 12px);
+  margin-bottom: 0;
+}
+</style>
+<style>
+.dosye-filters-bar{
+  padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center;
+}
+.dosye-filters-bar label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-right:2px;}
+.dosye-group-label{
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:3px;
+  color:var(--text-dim);text-transform:uppercase;
+  padding:16px 20px 8px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+}
+.dosye-group-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.dosye-group-label.dos-hidden, .dosye-grid.dos-hidden{display:none;}
+</style>
+<div class="dosye-filters-bar">
+<label>Группировка:</label>
+<button class="filter-btn all-btn active" onclick="filterDosyeFolders('all',this)">Все</button>
+<button class="filter-btn" data-dos-faction="neutral" onclick="filterDosyeFolders('neutral',this)" style="color:#b0b0a0;border-color:#b0b0a055;">Нейтральные</button>
+<button class="filter-btn" data-dos-faction="clean_sky" onclick="filterDosyeFolders('clean_sky',this)" style="color:#64b4dc;border-color:#64b4dc55;">Чистое небо</button>
+<button class="filter-btn" data-dos-faction="freedom" onclick="filterDosyeFolders('freedom',this)" style="color:#50b450;border-color:#50b45055;">Свобода</button>
+<button class="filter-btn" data-dos-faction="duty" onclick="filterDosyeFolders('duty',this)" style="color:#d23c3c;border-color:#d23c3c55;">Долг</button>
+<button class="filter-btn" data-dos-faction="scientists" onclick="filterDosyeFolders('scientists',this)" style="color:#80c8c8;border-color:#80c8c855;">Учёные</button>
+<button class="filter-btn" data-dos-faction="loners" onclick="filterDosyeFolders('loners',this)" style="color:#beaa64;border-color:#beaa6455;">Одиночки</button>
+<button class="filter-btn" data-dos-faction="bandits" onclick="filterDosyeFolders('bandits',this)" style="color:#a05a28;border-color:#a05a2855;">Бандиты</button>
+<button class="filter-btn" data-dos-faction="military" onclick="filterDosyeFolders('military',this)" style="color:#648cb4;border-color:#648cb455;">Военные</button>
+<button class="filter-btn" data-dos-faction="mercs" onclick="filterDosyeFolders('mercs',this)" style="color:#8c8c50;border-color:#8c8c5055;">Наёмники</button>
+<button class="filter-btn" data-dos-faction="alpha" onclick="filterDosyeFolders('alpha',this)" style="color:#c0392b;border-color:#c0392b55;">ЧВК «Альфа»</button>
+<button class="filter-btn" data-dos-faction="varangi" onclick="filterDosyeFolders('varangi',this)" style="color:#e8a020;border-color:#e8a02055;">Варяги</button>
+<button class="filter-btn" data-dos-faction="iig" onclick="filterDosyeFolders('iig',this)" style="color:#4080c0;border-color:#4080c055;">ИИГ</button>
+<button class="filter-btn" data-dos-faction="phantoms" onclick="filterDosyeFolders('phantoms',this)" style="color:#9090a0;border-color:#9090a055;">Фантомы</button>
+<button class="filter-btn" data-dos-faction="fallen_angels" onclick="filterDosyeFolders('fallen_angels',this)" style="color:#c0c0e0;border-color:#c0c0e055;">Падшие Ангелы</button>
+<button class="filter-btn" data-dos-faction="last_day" onclick="filterDosyeFolders('last_day',this)" style="color:#b04040;border-color:#b0404055;">Последний день</button>
+<button class="filter-btn" data-dos-faction="peacekeepers" onclick="filterDosyeFolders('peacekeepers',this)" style="color:#3090b0;border-color:#3090b055;">Миротворцы</button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ====== OVERLAYS PC ====== -->
+<!-- ЛИТВА -->
+
+<!-- ВЕДЬМАК -->
+
+<!-- ТУЗ -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ПАРСЕК -->
+
+<!-- ПРИЗМА (торговец) -->
+
+</div>
+<div class="dosye-overlay" id="dosye-npc-vektor" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#c0392b;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-vektor')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">ВЕКТОР</div>
+<div class="dossier-sub">Оперативник · ЧВК «Альфа»</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#c0392b">Оперативник</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#c0392b">ЧВК «Альфа»</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Среднего роста, жилистый. Двигается экономно — ни одного лишнего жеста. Держится чуть в стороне от разговора всегда: не из высокомерия, а из профессиональной привычки наблюдать.</p><p>Бывший офицер армейской разведки. Специалист по перемещению малых групп в сложной местности. Ориентируется по едва заметным деталям: обрывкам ленты на кустах, старым гильзам, поведению птиц. Говорит мало и по делу.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Планирование маршрутов через сложную местность. Знает тропы, которых нет на картах. Консультация по незаметному перемещению.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Избегает одного конкретного сектора Тёмной Долины — никогда не объясняет почему. Утверждает, что Зона «запоминает маршруты».</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#c0392b55;color:#c0392b;">
+      ▶ Зацепка: Если его попросить пройти через тот сектор — откажется. Выяснить причину: что там случилось?
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-kross" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#c0392b;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-kross')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">КРОСС</div>
+<div class="dossier-sub">Снайпер · ЧВК «Альфа»</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#c0392b">Снайпер</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#c0392b">ЧВК «Альфа»</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Худощавый, с постоянно прищуренными глазами — даже в помещении. Двигается медленно и намеренно. Может часами не менять позы.</p><p>Работает на больших дистанциях. В разговоре сух, почти математичен — оценивает людей и события через вероятности. Эмоций почти не проявляет, но слушает внимательнее, чем кажется.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Прикрытие с дальних позиций. Оценка угроз и вероятностей. Разведка наблюдением.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Однажды отказался стрелять по цели, заявив «это не тот человек». Через сутки выяснилось: цель действительно была подставной. Как он это понял — не объяснил.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#c0392b55;color:#c0392b;">
+      ▶ Зацепка: После того случая Парсек смотрит на него иначе. Вектор тоже. Кросс делает вид, что не замечает.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-karbon" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#c0392b;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-karbon')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">КАРБОН</div>
+<div class="dossier-sub">Оперативник · ЧВК «Альфа»</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#c0392b">Оперативник</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#c0392b">ЧВК «Альфа»</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Крупный, широкоплечий. Носит пулемёт так, будто это обычный автомат. Снаряжение всегда в порядке — явная военная привычка.</p><p>В бою — мобильная точка подавления, действует без лишних слов. За пределами операций неожиданно спокойный и даже вежливый. Говорит редко, но без грубости.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Огневое прикрытие, штурм укреплённых позиций, подавление группового сопротивления.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Досье в архиве Альфы почти пустое — несколько строк и зачёркнутое место службы. Даже Парсек не знает, откуда он пришёл.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#c0392b55;color:#c0392b;">
+      ▶ Зацепка: Если кто-то найдёт его настоящие документы — это изменит многое. Вопрос: кому выгодно, чтобы они оставались скрытыми.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-psikh" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#c0392b;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-psikh')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">ПСИХ</div>
+<div class="dossier-sub">Связист · ЧВК «Альфа»</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#c0392b">Связист</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#c0392b">ЧВК «Альфа»</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Нервный, быстрый. Всегда с наушниками на шее или на ушах. Пальцы постоянно в движении — что-то крутит, набирает, настраивает.</p><p>Отвечает за радиосеть ячеек Альфы. Может настроить устойчивую связь даже в самых глухих местах Зоны, где аномалии глушат большинство частот. Любит слушать старые записи радиоэфира — говорит, что в них больше правды, чем в живых переговорах.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Радиосвязь в сложных условиях. Перехват и дешифровка чужих переговоров. Установка ретрансляторов.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Периодически ловит передачи на частотах, которые никто больше не слышит. Часть записей хранит только у себя — не докладывает Парсеку.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#c0392b55;color:#c0392b;">
+      ▶ Зацепка: Последняя поманившая запись содержала координаты и голос, который, по словам Психа, он уже слышал раньше. Где — не говорит.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-korol" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#e8a020;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-korol')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">КОРОЛЬ</div>
+<div class="dossier-sub">Командир · Варяги</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#e8a020">Командир</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Имя</div><div class="dossier-field-value">Лев Смолнеко</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#e8a020">Варяги</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Крупный, с военной выправкой, но без армейской скованности. Шрамы на руках. Смотрит на собеседника прямо и долго — оценивает.</p><p>Ветеран войсковой разведки. Харизматичен и жесток в равной мере. Верит в ритуал силы: каждый бой — испытание. Не терпит предательства, но всегда открыто предлагает шанс на искупление — через кровь. Это не метафора.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Боевое командование, тактика малых групп. Контакты в среде наёмников и бывших военных.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Ищет «смертельный» поединок с лидером соперничающей группировки — ради чести и подтверждения власти. Уже присмотрел несколько кандидатов.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#e8a02055;color:#e8a020;">
+      ▶ Зацепка: Если игрок заслужит его уважение — Король предложит испытание. Отказаться сложно без потери репутации.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-karat" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#e8a020;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-karat')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">КАРАТ</div>
+<div class="dossier-sub">Исполнитель · Варяги</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#e8a020">Исполнитель</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Имя</div><div class="dossier-field-value">Игорь Трясинин</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#e8a020">Варяги</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Спокойное, почти мягкое лицо. Говорит тихо, без интонаций. Именно это пугает больше всего.</p><p>Бывший военный следователь. Знает, как ломать людей — и как вовремя остановиться, чтобы они остались функциональными. Безэмоциональный по умолчанию. Не повышает голос никогда.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Допросы, психологическое давление, разрешение внутренних конфликтов в группировке. Знает, у кого что есть.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Хранит личные досье на нескольких бывших коллег — компромат, способный запустить внутреннюю чистку в Варягах. Держит как страховку.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#e8a02055;color:#e8a020;">
+      ▶ Зацепка: Кто-то начал копать под Карата. Он уже знает — и ждёт, кто придёт первым.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-mitrich" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#e8a020;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-mitrich')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">МИТРИЧ</div>
+<div class="dossier-sub">Интендант · Варяги</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#e8a020">Интендант</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Имя</div><div class="dossier-field-value">Тихон Митрич</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#e8a020">Варяги</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Немолодой, аккуратный. Одет чище, чем большинство в Зоне. Всегда с блокнотом. Нервничает по-тихому — незаметно, но постоянно.</p><p>Бывший военный интендант. Любит порядок в бумагах и цифрах. Не конфликтует на показ — решает всё через учёт, распределение и доступ к ресурсам. Тихая власть в группировке: кто держит снабжение, держит всё.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Материальное обеспечение, кадровый учёт, отчётность. Знает, где что лежит и кто чем пользуется.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>В недавнем рейде среди трофеев обнаружил предмет, который не может объяснить. Хранит его в личном сейфе. С тех пор плохо спит.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#e8a02055;color:#e8a020;">
+      ▶ Зацепка: Готов отдать этот предмет — или информацию о нём — тому, кто объяснит, что это такое и почему оно до сих пор активно.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-dale" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#4080c0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-dale')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">ДЖОН ДЕЙЛ</div>
+<div class="dossier-sub">Командир · ИИГ</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#4080c0">Командир</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#4080c0">ИИГ</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Гладко выбрит, аккуратен. Говорит с лёгким американским акцентом на русском. В поле выглядит немного не на месте — но только до первого кризиса.</p><p>Бывший аналитик международной комиссии по техногенным катастрофам. В Зону пришёл не как солдат, а как координатор научных миссий. Холодный, рациональный. Привык оперировать фактами и докладами, а не интуицией.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Доступ к ресурсам ИИГ. Координация операций между учёными и оперативниками. Официальное прикрытие для работы в Зоне.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Подозревает, что среди сотрудников ИИГ есть агент другой структуры, заинтересованной в сокрытии правды о Зоне.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#4080c055;color:#4080c0;">
+      ▶ Зацепка: Предложит сотрудничество — в обмен на информацию, которую ИИГ не может получить официально.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-smith" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#4080c0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-smith')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">МЭТТ СМИТ</div>
+<div class="dossier-sub">Оперативник · ИИГ</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#4080c0">Оперативник</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#4080c0">ИИГ</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Плотный, коротко стриженный. Взгляд человека, привыкшего оценивать выходы из помещения. Оружие носит так, будто оно часть тела.</p><p>Бывший военнослужащий сил специального назначения одной из стран НАТО. Работает как силовое прикрытие для исследовательских экспедиций. Практичен и прямолинеен — иногда до грубости.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Охрана и силовое сопровождение. Тактическая поддержка в поле. Оценка угроз.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Начал сомневаться в методах ИИГ после ликвидации случайного свидетеля. Пока выполняет приказы — но вопросы накапливаются.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#4080c055;color:#4080c0;">
+      ▶ Зацепка: Если ему предложат альтернативу — выслушает. Не предаст ИИГ первым, но может помочь обойти их ограничения.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-hofmann" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#4080c0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-hofmann')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">КЛАРА ХОФМАНН</div>
+<div class="dossier-sub">Учёный · ИИГ</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#4080c0">Учёный</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#4080c0">ИИГ</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Немецкая точность во всём: в речи, в движениях, в организации полевого оборудования. Носит очки. Редко улыбается, но не потому что недружелюбна.</p><p>Изучает природу аномалий и выбросов. Считает Зону результатом неудачного технологического эксперимента — не природной аномалии и не мистики. Говорит по делу, гипотезы формулирует чётко.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Анализ аномалий. Прогнозирование выбросов. Научные консультации по физике Зоны.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Обнаружила совпадения между лабораториями серии X и старым международным проектом времён холодной войны. Публиковать данные ИИГ не позволяет.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#4080c055;color:#4080c0;">
+      ▶ Зацепка: Ищет доступ к документам лабораторий X. Заплатит или обменяет на информацию о выбросах.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-brown" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#4080c0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-brown')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">АЛЕКСАНДР БРАУН</div>
+<div class="dossier-sub">Архивист · ИИГ</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#4080c0">Архивист</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#4080c0">ИИГ</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Тихий, незаметный. Носит очки и всегда что-то записывает. В поле выглядит уязвимо, но умеет оставаться незамеченным.</p><p>Историк науки. Занимается поиском старых документов и научных отчётов советской эпохи. Педантичен до крайности. Почти никогда не участвует в боевых операциях, но знает об истории Зоны больше многих.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Идентификация и расшифровка старых документов. История объектов и лабораторий. Источники по советской программе.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Нашёл фрагмент документа, указывающего на причастность к созданию Зоны нескольких ныне живых людей. Пока не знает, что с этим делать.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#4080c055;color:#4080c0;">
+      ▶ Зацепка: Ищет кого-то надёжного, чтобы передать копию фрагмента. Боится хранить в одном месте.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-weber" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#4080c0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-weber')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">ЛУКАС ВЕБЕР</div>
+<div class="dossier-sub">Инженер · ИИГ</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#4080c0">Инженер</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#4080c0">ИИГ</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Молодой, взъерошенный. Постоянно что-то паяет или разбирает. Карманы всегда полны мелкими деталями.</p><p>Специалист по научному оборудованию и детекторам аномалий. Может собрать рабочий прибор из подручных деталей в полевых условиях. Увлечён своей работой до рассеянности.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Создание и ремонт детекторов и научного оборудования. Техническая поддержка экспедиций.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Недавно собранный им датчик начал фиксировать сигналы неизвестного происхождения из глубины Зоны — с равномерными интервалами, как будто это передача.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#4080c055;color:#4080c0;">
+      ▶ Зацепка: Хочет найти источник сигнала. Нужен кто-то, кто проведёт в нужную точку.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-alvares" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#4080c0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-alvares')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">МАРИЯ АЛЬВАРЕС</div>
+<div class="dossier-sub">Медик · ИИГ</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#4080c0">Медик</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#4080c0">ИИГ</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Спокойная, с быстрыми руками и внимательным взглядом. Работает молча, без лишних движений.</p><p>Бывший врач гуманитарных миссий. В Зоне занимается лечением персонала и изучением воздействия аномалий на организм человека. Не паникует. Не задаёт лишних вопросов — зато замечает многое.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Медицинская помощь. Лечение последствий воздействия аномалий и радиации.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Обнаружила странные изменения крови у одного из сотрудников ИИГ. Скрыла результаты анализа — не решила, кому можно доверять с этой информацией.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#4080c055;color:#4080c0;">
+      ▶ Зацепка: Попросит достать редкий медицинский препарат или образец для анализа — взамен поделится тем, что нашла.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-ten" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#9090a0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-ten')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">ТЕНЬ</div>
+<div class="dossier-sub">Командир · Фантомы</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#9090a0">Командир</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#9090a0">Фантомы</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Никто не может сказать, как он выглядит. Те, кто видел его в операции, описывают по-разному. Одно общее: тихий.</p><p>Говорит редко, всегда тихо. Бойцы подчиняются без обсуждений — не из страха, а из абсолютной уверенности в его решениях. В операциях почти не использует радио: предпочитает заранее выстроенные планы и условные сигналы.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Высокоточные операции без следов. Информация о том, что происходит в местах, куда никто не заходит.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Настоящее имя неизвестно никому в Зоне. Возможно, и прошлое тоже.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#9090a055;color:#9090a0;">
+      ▶ Зацепка: Фантомы появляются сами, когда задача им интересна. Что их заинтересует — отдельный вопрос.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-mrak" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#9090a0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-mrak')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">МРАК</div>
+<div class="dossier-sub">Оперативник · Фантомы</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#9090a0">Оперативник</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#9090a0">Фантомы</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Выжившие после столкновения описывают движение, а не человека. Говорят: не издаёт звуков — даже шагов.</p><p>Действует быстро и жёстко. Предпочитает короткие дистанции, дробовик и нож. Движется так, будто заранее знает расположение противника. Никто из тех, кто видел его в бою вплотную, не мог потом объяснить, как именно это произошло.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Бесшумное устранение. Зачистка в закрытых помещениях.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Выжившие после столкновений с Мраком иногда сообщают, что не слышали ничего — даже предсмертного. Это либо мастерство, либо кое-что другое.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#9090a055;color:#9090a0;">
+      ▶ Зацепка: Несколько человек клянутся, что видели его в двух местах одновременно. Может, просто паника. Может, нет.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-spektr" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#9090a0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-spektr')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">СПЕКТР</div>
+<div class="dossier-sub">Снайпер · Фантомы</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#9090a0">Снайпер</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#9090a0">Фантомы</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Никто не видел его позицию. Только след — пустое место и гильза.</p><p>Работает на дистанциях, которые другие снайперы считают невозможными для полевых условий. Может часами лежать неподвижно. После выстрела меняет позицию так, что отследить невозможно — даже ретроспективно.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Устранение на экстремальных дистанциях. Прикрытие операций Фантомов.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Несколько пуль, найденных на местах его работы, имеют необычную обработку — как будто изготовлены специально под конкретную цель. Кто их делает — неизвестно.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#9090a055;color:#9090a0;">
+      ▶ Зацепка: Если его пуля не попала — значит, не должна была. Это случилось один раз. Выживший до сих пор не понимает почему.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-cerber" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#c0c0e0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-cerber')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">ЦЕРБЕР</div>
+<div class="dossier-sub">Командир · Падшие Ангелы</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#c0c0e0">Командир</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#c0c0e0">Падшие Ангелы</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Немолодой, с тихой усталостью в движениях — но не в взгляде. Строгий без показного. Говорит «хватит» один раз.</p><p>Бывший наёмник. Участвовал в операции, где группа зачистила лагерь сталкеров по ложной информации — погибли люди, которые просто пытались выжить. После этого исчез из всех сетей. Строг, дисциплинирован. Его правило: «Если можешь решить разговором — сначала попробуй разговор». В бою действует холодно и точно.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Нейтральная переговорная площадка между враждующими группами. Силовая помощь в безнадёжных ситуациях — иногда бесплатно.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Хранит список людей, погибших в той операции. Некоторые фамилии вычеркнуты — когда удаётся спасти кого-то, кто мог повторить их судьбу.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#c0c0e055;color:#c0c0e0;">
+      ▶ Зацепка: Он ищет одного из тех, кто передал ложную информацию тогда. Этот человек, возможно, до сих пор в Зоне.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-validol" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#c0c0e0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-validol')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">ВАЛИДОЛ</div>
+<div class="dossier-sub">Медик · Падшие Ангелы</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#c0c0e0">Медик</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#c0c0e0">Падшие Ангелы</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Невысокий, спокойный, с вечно закатанными рукавами. В руках всегда что-то — бинт, шприц, инструмент. Может шутить во время операции.</p><p>Прозвище получил ещё до Зоны. Когда другие медики говорили «не дотянет» — Валидол отвечал «посмотрим» и начинал работать. Не делит пациентов на «своих» и «чужих» — лечит всех, кто приходит. Это иногда создаёт напряжение внутри группы. Цербер всегда поддерживает.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Медицинская помощь любому — независимо от группировки. Лечение последствий Зоны.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Ведёт личный журнал наблюдений о том, что происходит с людьми после длительного пребывания в Зоне. Некоторые записи выглядят скорее как научное исследование, чем медицинская документация.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#c0c0e055;color:#c0c0e0;">
+      ▶ Зацепка: Ищет образцы и данные для журнала. Предложит лечение в обмен на доступ к пациентам с необычными симптомами.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-domkrat" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#c0c0e0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-domkrat')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">ДОМКРАТ</div>
+<div class="dossier-sub">Техник · Падшие Ангелы</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#c0c0e0">Техник</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#c0c0e0">Падшие Ангелы</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Один из самых молодых в группе. Часто разговаривает сам с собой. Руки в масле и мелких порезах. Инструменты торчат из всех карманов.</p><p>До Зоны работал механиком — возможно, на железной дороге. Умеет починить почти всё. Восстанавливал детекторы, собирал генераторы из металлолома, однажды запустил освещение в здании, списанном три года назад. Внешне рассеянный, но его устройства работают безотказно.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Ремонт и создание оборудования. Защитные системы лагеря: сигналки, ловушки, датчики. Нестандартные технические решения.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>В старых лабораториях и бункерах находит технологии, происхождение которых не может объяснить. Несколько находок изучает самостоятельно, не докладывая даже Церберу.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#c0c0e055;color:#c0c0e0;">
+      ▶ Зацепка: Одна из его находок явно излучает что-то. Что именно — не знает. Нужен кто-то с научным образованием.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-rein" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#b04040;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-rein')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">АЛЕКСАНДР РЕЙН</div>
+<div class="dossier-sub">Командир · Последний день</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#b04040">Командир</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#b04040">Последний день</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Сдержанный, без лишних движений. Смотрит чуть дольше, чем обычно — оценивает. Речь точная, без воды.</p><p>Бывший сотрудник разведслужбы Беларуси. Опытный стратег. Спокойный, рациональный, умеет держать команду под контролем в стрессовых ситуациях. В Зону пришёл с конкретной целью — и об этой цели говорит мало.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Стратегическое планирование операций. Доступ к сети информаторов внутри Зоны.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Подозревает, что лаборатория Сахарова внедрила агентов внутрь «Последнего дня». Уже ведёт собственную проверку.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#b0404055;color:#b04040;">
+      ▶ Зацепка: Нужен человек со стороны — незасвеченный. Для задачи, которую нельзя доверить своим.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-beiley" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#b04040;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-beiley')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">МАРКУС БЕЙЛИ</div>
+<div class="dossier-sub">Оперативник · Последний день</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#b04040">Оперативник</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#b04040">Последний день</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Крепкий, с характерными ожогами на левом предплечье. Быстро двигается, быстро решает.</p><p>Бывший солдат спецподразделения. Специализируется на тактических рейдах и зачистках зон с зомбированными сталкерами. Практичен и прямолинеен. Работает в экстремальных условиях без видимых усилий.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Зачистки заражённых зон. Боевая поддержка в операциях против зомбированных.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Несколько раз попадал под прямое воздействие зомбирующего излучения и выжил. Сам не знает почему. Изучает поведение зомбированных — ищет закономерность.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#b0404055;color:#b04040;">
+      ▶ Зацепка: Заметил, что зомбированные иногда реагируют на определённые звуки нестандартно. Нужен кто-то, кто поможет проверить теорию.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-leblan" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#b04040;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-leblan')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">ФРАНСУА ЛЕБЛАН</div>
+<div class="dossier-sub">Инженер · Последний день</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#b04040">Инженер</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#b04040">Последний день</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Высокий, худой, с аккуратными руками и привычкой смотреть под ноги. Говорит с лёгким французским акцентом.</p><p>Умеет обезвреживать аномалии и старое советское оборудование. Создаёт ловушки для зомбированных сталкеров, ремонтирует датчики. Работает методично, не торопится.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Обезвреживание аномалий. Установка и нейтрализация ловушек. Техническое оснащение операций.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Однажды собрал устройство, которое случайно активировало скрытую аномалию. Несколько человек пострадало. С тех пор дважды проверяет каждую схему.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#b0404055;color:#b04040;">
+      ▶ Зацепка: Нашёл схему устройства советской разработки, которую не может опознать. Ищет кого-то, кто разбирается в ранних лабораторных технологиях.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-solovieva" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#b04040;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-solovieva')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">ОЛЬГА СОЛОВЬЁВА</div>
+<div class="dossier-sub">Биолог · Последний день</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#b04040">Биолог</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#b04040">Последний день</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Спокойная, педантичная. Носит перчатки почти всегда. Записывает наблюдения мелким почерком в полевой дневник.</p><p>Изучает мутации и влияние Зоны на людей и живых существ. Внешне кажется холодной — просто не тратит слова впустую. Точность важнее вежливости.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Анализ мутаций и биологического воздействия Зоны. Полевые исследования живых существ.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Ведёт скрытую запись изменений зомбированных сталкеров. Обнаружила закономерность, которую пока не может объяснить — и делится выводами только с узким кругом доверенных.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#b0404055;color:#b04040;">
+      ▶ Зацепка: Нужен свежий биологический образец из точки с высоким пси-излучением. Взамен — данные, способные изменить понимание зомбирования.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-hansen" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#3090b0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-hansen')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">КОРТНИ ХАНСЕН</div>
+<div class="dossier-sub">Командир · Миротворцы</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#3090b0">Командир</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#3090b0">Миротворцы</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Подтянутая, с военной выправкой. Редко улыбается. Говорит чётко, без лишних слов. Форма всегда в порядке.</p><p>Ветеран американских спецподразделений. Хладнокровный стратег, требует точных приказов и жёсткой дисциплины. В поле принимает решения быстро — и не всегда в соответствии с уставом.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Ресурсы батальона ООН. Официальное прикрытие для операций. Доступ к периметру и блокпостам.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Иногда действует вопреки приказам штаба, ссылаясь на «ситуацию на месте». Штаб закрывает глаза — пока результаты хорошие.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#3090b055;color:#3090b0;">
+      ▶ Зацепка: Нужна информация, которую она не может запросить официально. Предложит взаимовыгодный обмен.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-jensen" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#3090b0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-jensen')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">МАРК ДЖЕНСЕН</div>
+<div class="dossier-sub">Командир · Миротворцы</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#3090b0">Командир</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#3090b0">Миротворцы</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Спокойный, рассудительный. Говорит взвешенно. Умеет слушать — что среди военных редкость.</p><p>Опытный офицер. Следит за выполнением приказов и дисциплиной подчинённых. В отличие от Хансен, всегда действует строго по уставу. Именно это делает его предсказуемым — и в каком-то смысле более опасным.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Внутренняя информация о структуре батальона. Официальные каналы ООН.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Подозревает, что кто-то в батальоне имеет собственную повестку, не связанную с миссией. Уже начал внутреннее наблюдение.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#3090b055;color:#3090b0;">
+      ▶ Зацепка: Если его подозрения подтвердятся, ему нужны доказательства — собранные кем-то снаружи.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-king" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#3090b0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-king')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">САРА КИНГ</div>
+<div class="dossier-sub">Медик · Миротворцы</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#3090b0">Медик</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#3090b0">Миротворцы</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Спокойная, строгая. Не терпит хаоса в медицинской зоне. Работает быстро и без лишних слов.</p><p>Полевой врач с большим опытом работы в зонах конфликтов. Умеет держать себя и окружающих в рабочем состоянии даже в самых тяжёлых ситуациях.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Медицинская помощь. Доступ к ресурсам батальонной медслужбы.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Иногда оказывает помощь пострадавшим сталкерам, скрывая этот факт от командования. Считает, что устав не должен определять, кому жить.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#3090b055;color:#3090b0;">
+      ▶ Зацепка: Один из её «тайных» пациентов что-то знает. Она попросит помочь его вытащить — в обмен на доступ к медицине.
+    </div>
+</div>
+</div>
+</div>
+<div class="dosye-overlay" id="dosye-npc-ryan" onclick="closeDosyeOutside(event,this)">
+<div class="dosye-paper" style="border-top-color:#3090b0;">
+<button class="dosye-close" onclick="closeDosye('dosye-npc-ryan')">✕</button>
+<div class="dossier">
+<div class="dossier-header">
+<div class="dossier-codename">ДЖЕЙМС РАЙАН</div>
+<div class="dossier-sub">Снайпер · Миротворцы</div>
+</div>
+<div class="dossier-meta">
+<div class="dossier-field"><div class="dossier-field-label">Роль</div><div class="dossier-field-value" style="color:#3090b0">Снайпер</div></div>
+<div class="dossier-field"><div class="dossier-field-label">Группировка</div><div class="dossier-field-value" style="color:#3090b0">Миротворцы</div></div>
+</div>
+<div class="dossier-section">
+<h4>Внешность и характер</h4>
+<div class="dossier-text"><p>Тихий, наблюдательный. Говорит редко, слушает много. Глаза привыкли к дальним дистанциям.</p><p>Меткий стрелок, специализируется на дальних дистанциях. Контролирует подступы к базе. Профессионален и надёжен — в рамках приказа.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Чем полезен</h4>
+<div class="dossier-text"><p>Прикрытие дальними выстрелами. Наблюдение и разведка с позиций.</p></div>
+</div>
+<div class="dossier-section">
+<h4>Тайное</h4>
+<div class="dossier-text"><p>Несколько раз «обнаруживал» цель, которая не числилась в приказах — и докладывал об этом. Командование каждый раз принимает его доклад без лишних вопросов, что само по себе странно.</p></div>
+</div>
+<div class="dossier-warning" style="border-color:#3090b055;color:#3090b0;">
+      ▶ Зацепка: Последняя такая цель была жива. Райан решил не стрелять и не доложил. Теперь ждёт последствий.
+    </div>
+</div>
+</div>
+</div>
+<!-- /section-dosye -->
+<!-- ===== БЕСТИАРИЙ ===== -->
+<style>
+/* BESTIARY */
+.bestiary-filter{padding:12px 20px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.bestiary-filter label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-right:4px;}
+
+.bestiary-grid{padding:16px 16px 50px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;}
+
+.mut-card{
+  background: linear-gradient(to right, rgba(20,8,8,.6) 0%, var(--bg2) 18%);
+  border:1px solid var(--border);
+  border-left:4px solid var(--border-bright);
+  border-top:none;
+  padding:12px 14px 14px 16px;
+  position:relative;
+  transition:border-left-color .2s, background .2s;
+}
+.mut-card:hover{
+  background: linear-gradient(to right, rgba(30,10,10,.7) 0%, #111410 18%);
+  border-left-color:var(--accent);
+}
+.mut-card.tier-pack  { border-left-color:rgba(93,186,96,.7);  background: linear-gradient(to right, rgba(10,20,10,.6) 0%, var(--bg2) 18%); }
+.mut-card.tier-mid   { border-left-color:rgba(200,162,39,.8); background: linear-gradient(to right, rgba(20,15,5,.6) 0%, var(--bg2) 18%); }
+.mut-card.tier-danger{ border-left-color:rgba(192,57,43,.9);  background: linear-gradient(to right, rgba(25,6,6,.7) 0%, var(--bg2) 18%); }
+.mut-card.tier-elite { border-left-color:rgba(155,89,182,.9); background: linear-gradient(to right, rgba(15,8,22,.7) 0%, var(--bg2) 18%); }
+.mut-card.hidden{display:none;}
+
+.mut-header{display:flex;align-items:center;gap:10px;margin-bottom:9px;padding-bottom:8px;border-bottom:1px solid rgba(192,57,43,.12);}
+.mut-name{font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;color:var(--header);letter-spacing:2px;text-transform:uppercase;flex:1;}
+.mut-tier{font-size:9px;letter-spacing:1px;text-transform:uppercase;flex-shrink:0;padding:2px 7px;border-radius:2px;}
+.tier-label-pack{background:rgba(93,186,96,.12);color:#7ec880;border:1px solid rgba(93,186,96,.3);}
+.tier-label-mid{background:rgba(200,162,39,.12);color:#c8a227;border:1px solid rgba(200,162,39,.3);}
+.tier-label-danger{background:rgba(192,57,43,.12);color:#e07060;border:1px solid rgba(192,57,43,.3);}
+.tier-label-elite{background:rgba(155,89,182,.12);color:#bb87d8;border:1px solid rgba(155,89,182,.3);}
+
+.mut-traits{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px;}
+.mut-trait{font-size:9px;padding:2px 6px;border-radius:2px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-dim);}
+.mut-trait.t-psi{border-color:rgba(155,89,182,.4);color:#bb87d8;}
+.mut-trait.t-invis{border-color:rgba(93,186,96,.3);color:#7ec880;}
+.mut-trait.t-pack{border-color:rgba(200,162,39,.3);color:#c8a227;}
+.mut-trait.t-danger{border-color:rgba(192,57,43,.4);color:#e07060;}
+.mut-trait.t-armor{border-color:rgba(74,82,73,.5);color:#8a9a88;}
+
+.mut-block{margin-bottom:7px;}
+.mut-block-label{font-size:9px;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px;}
+.mut-block-text{font-size:11px;line-height:1.7;color:var(--text-dim);}
+
+.mut-tactic{margin-top:9px;padding-top:8px;border-top:1px solid var(--border);
+  font-size:10px;color:#6a8f6a;line-height:1.55;}
+.mut-tactic::before{content:"▶ ТАКТИКА: ";color:var(--accent);font-family:'Oswald',sans-serif;letter-spacing:1px;}
+</style>
+<div class="section" id="section-bestiary">
+<div class="bestiary-filter">
+<label>Угроза:</label>
+<button class="filter-btn all-btn active" onclick="filterBestiary('all',this)">Все</button>
+<button class="filter-btn" onclick="filterBestiary('pack',this)" style="color:#7ec880;border-color:rgba(93,186,96,.4);">Стайные</button>
+<button class="filter-btn" onclick="filterBestiary('mid',this)" style="color:#c8a227;border-color:rgba(200,162,39,.4);">Средняя</button>
+<button class="filter-btn" onclick="filterBestiary('danger',this)" style="color:#e07060;border-color:rgba(192,57,43,.4);">Опасные</button>
+<button class="filter-btn" onclick="filterBestiary('elite',this)" style="color:#bb87d8;border-color:rgba(155,89,182,.4);">Элита / Пси</button>
+</div>
+<div class="bestiary-grid"></div>
+</div><!-- /section-bestiary -->
+<!-- ===== АРТЕФАКТЫ ===== -->
+<style>
+/* ARTIFACTS */
+.art-filters{padding:12px 20px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.art-filters label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-right:2px;}
+.art-sep{width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0;}
+
+.art-grid{padding:16px 16px 50px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px;}
+
+.art-card{
+  background: rgba(8,12,18,.7);
+  border:1px solid var(--border);
+  border-top:none;
+  border-bottom:2px solid var(--border-bright);
+  padding:13px 15px 14px;
+  position:relative;
+  transition:border-bottom-color .2s, background .2s;
+}
+/* catalog corner mark top-right */
+.art-card::before{
+  content:'';position:absolute;top:-1px;right:-1px;
+  width:8px;height:8px;
+  border-top:1px solid var(--border-bright);
+  border-right:1px solid var(--border-bright);
+  transition:border-color .2s;
+}
+.art-card:hover{ background: rgba(10,16,24,.9); border-bottom-color:var(--accent); }
+.art-card:hover::before{ border-color:var(--accent); }
+.art-card.hidden{display:none;}
+
+/* origin colours */
+.art-card.o-elec { border-bottom-color:rgba(74,144,226,.7); }
+.art-card.o-elec::before { border-color:rgba(74,144,226,.5); }
+.art-card.o-therm{ border-bottom-color:rgba(230,100,30,.7); }
+.art-card.o-therm::before{ border-color:rgba(230,100,30,.5); }
+.art-card.o-chem { border-bottom-color:rgba(80,180,80,.7); }
+.art-card.o-chem::before { border-color:rgba(80,180,80,.5); }
+.art-card.o-grav { border-bottom-color:rgba(200,162,39,.7); }
+.art-card.o-grav::before { border-color:rgba(200,162,39,.5); }
+.art-card.o-unique{ border-bottom-color:rgba(155,89,182,.8); }
+.art-card.o-unique::before{ border-color:rgba(155,89,182,.6); }
+.art-card:hover{ border-bottom-color:var(--accent); }
+
+.art-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid rgba(74,144,226,.1);}
+.art-name{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--header);letter-spacing:2px;text-transform:uppercase;flex:1;}
+.art-rarity{font-size:8px;padding:2px 6px;border-radius:2px;letter-spacing:1px;text-transform:uppercase;flex-shrink:0;}
+.r-common{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text-dim);}
+.r-uncommon{background:rgba(200,162,39,.1);border:1px solid rgba(200,162,39,.3);color:#c8a227;}
+.r-rare{background:rgba(74,144,226,.1);border:1px solid rgba(74,144,226,.3);color:#7ab4e8;}
+.r-legendary{background:rgba(155,89,182,.12);border:1px solid rgba(155,89,182,.4);color:#bb87d8;}
+
+.art-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.art-tag{font-size:9px;padding:2px 6px;border-radius:2px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-dim);}
+.art-tag.elec{border-color:rgba(74,144,226,.4);color:#7ab4e8;}
+.art-tag.therm{border-color:rgba(230,100,30,.4);color:#e07050;}
+.art-tag.chem{border-color:rgba(80,180,80,.4);color:#7ec880;}
+.art-tag.grav{border-color:rgba(200,162,39,.4);color:#c8a227;}
+.art-tag.psi{border-color:rgba(155,89,182,.4);color:#bb87d8;}
+.art-tag.rad{border-color:rgba(192,57,43,.35);color:#e07060;}
+
+.art-effect{font-size:11px;line-height:1.65;color:var(--text);margin-bottom:6px;}
+.art-look{font-size:10px;line-height:1.6;color:var(--text-dim);margin-bottom:6px;}
+.art-note{margin-top:7px;padding-top:6px;border-top:1px solid var(--border);font-size:10px;color:#6a8f6a;line-height:1.5;}
+.art-note::before{content:"▶ ";color:var(--accent);}
+</style>
+<div class="section" id="section-artifacts">
+<div class="art-filters">
+<label>Тип:</label>
+<button class="filter-btn all-btn active" onclick="filterArt('origin','all',this)">Все</button>
+<button class="filter-btn" data-origin="o-elec" onclick="filterArt('origin','o-elec',this)" style="color:#7ab4e8;border-color:rgba(74,144,226,.4);">Электро</button>
+<button class="filter-btn" data-origin="o-therm" onclick="filterArt('origin','o-therm',this)" style="color:#e07050;border-color:rgba(230,100,30,.4);">Термо</button>
+<button class="filter-btn" data-origin="o-chem" onclick="filterArt('origin','o-chem',this)" style="color:#7ec880;border-color:rgba(80,180,80,.4);">Хим</button>
+<button class="filter-btn" data-origin="o-grav" onclick="filterArt('origin','o-grav',this)" style="color:#c8a227;border-color:rgba(200,162,39,.4);">Грави</button>
+<button class="filter-btn" data-origin="o-unique" onclick="filterArt('origin','o-unique',this)" style="color:#bb87d8;border-color:rgba(155,89,182,.4);">Особые</button>
+<div class="art-sep"></div>
+<label>Редкость:</label>
+<button class="filter-btn" data-rarity="r-common" onclick="filterArt('rarity','r-common',this)">Обычные</button>
+<button class="filter-btn" data-rarity="r-uncommon" onclick="filterArt('rarity','r-uncommon',this)" style="color:#c8a227;border-color:rgba(200,162,39,.3);">Средние</button>
+<button class="filter-btn" data-rarity="r-rare" onclick="filterArt('rarity','r-rare',this)" style="color:#7ab4e8;border-color:rgba(74,144,226,.3);">Редкие</button>
+<button class="filter-btn" data-rarity="r-legendary" onclick="filterArt('rarity','r-legendary',this)" style="color:#bb87d8;border-color:rgba(155,89,182,.3);">Легенд.</button>
+</div>
+<div class="art-grid"></div>
+</div><!-- /section-artifacts -->
+<!-- ===== АНОМАЛИИ ===== -->
+<style>
+/* ANOMALIES — sensor tiles + field reports */
+.anom-filters{padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.anom-filters label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-right:2px;}
+.anom-sep{width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0;}
+
+.anom-zone-title{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:3px;
+  color:var(--text-dim);text-transform:uppercase;
+  padding:20px 20px 10px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;}
+.anom-zone-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── BASE GRID — tight sensor tiles ── */
+.anom-grid{
+  padding:14px 16px 8px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:2px;
+}
+
+/* BASE ANOMALY CARD */
+.anom-card{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  position:relative;
+  padding:14px 14px 12px;
+  overflow:hidden;
+  transition:box-shadow .25s, background .2s;
+}
+.anom-card:hover{
+  background:rgba(16,20,15,1);
+  box-shadow:inset 0 0 28px -8px var(--anom-glow,rgba(93,186,96,.15)),
+             0 0 0 1px var(--anom-color,var(--border-bright));
+}
+/* top colour bar */
+.anom-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--anom-color,var(--border-bright));
+  opacity:.7;transition:opacity .2s;
+}
+.anom-card:hover::before{opacity:1;}
+/* radial glow top centre */
+.anom-card::after{
+  content:'';position:absolute;top:-30px;left:50%;transform:translateX(-50%);
+  width:120px;height:80px;
+  background:radial-gradient(ellipse,var(--anom-glow,rgba(93,186,96,.08)) 0%,transparent 70%);
+  pointer-events:none;
+}
+.anom-card.hidden{display:none;}
+
+.anom-card.t-grav  {--anom-color:rgba(200,162,39,.9);--anom-glow:rgba(200,162,39,.12);}
+.anom-card.t-therm {--anom-color:rgba(220,80,30,.9); --anom-glow:rgba(220,80,30,.12);}
+.anom-card.t-chem  {--anom-color:rgba(80,180,80,.9); --anom-glow:rgba(80,180,80,.12);}
+.anom-card.t-elec  {--anom-color:rgba(74,144,226,.9);--anom-glow:rgba(74,144,226,.12);}
+.anom-card.t-space {--anom-color:rgba(155,89,182,.9);--anom-glow:rgba(155,89,182,.12);}
+.anom-card.t-plant {--anom-color:rgba(60,140,100,.9);--anom-glow:rgba(60,140,100,.12);}
+.anom-card.t-psi   {--anom-color:rgba(190,80,190,.9);--anom-glow:rgba(190,80,190,.12);}
+
+.anom-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.anom-name{font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;
+  color:var(--header);letter-spacing:2px;text-transform:uppercase;flex:1;line-height:1.2;}
+.anom-type{font-size:8px;padding:2px 6px;border-radius:1px;letter-spacing:1px;
+  text-transform:uppercase;flex-shrink:0;font-family:'Share Tech Mono',monospace;}
+.at-grav  {background:rgba(200,162,39,.12);color:#c8a227;border:1px solid rgba(200,162,39,.3);}
+.at-therm {background:rgba(220,80,30,.12); color:#e07050;border:1px solid rgba(220,80,30,.3);}
+.at-chem  {background:rgba(80,180,80,.12); color:#7ec880;border:1px solid rgba(80,180,80,.3);}
+.at-elec  {background:rgba(74,144,226,.12);color:#7ab4e8;border:1px solid rgba(74,144,226,.3);}
+.at-space {background:rgba(155,89,182,.12);color:#bb87d8;border:1px solid rgba(155,89,182,.3);}
+.at-plant {background:rgba(60,140,100,.12);color:#6abf90;border:1px solid rgba(60,140,100,.3);}
+.at-psi   {background:rgba(190,80,190,.12);color:#d87ed8;border:1px solid rgba(190,80,190,.3);}
+.at-mix   {background:rgba(120,80,40,.12); color:#b09060;border:1px solid rgba(120,80,40,.3);}
+
+.anom-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px;}
+.anom-tag{font-size:9px;padding:1px 5px;border-radius:1px;border:1px solid var(--border);color:var(--text-dim);background:rgba(255,255,255,.03);}
+.anom-tag.mobile {border-color:rgba(192,57,43,.4);color:#e07060;}
+.anom-tag.rare   {border-color:rgba(155,89,182,.4);color:#bb87d8;}
+.anom-tag.nodect {border-color:rgba(74,82,73,.5);  color:#8a9a88;}
+.anom-tag.deadly {border-color:rgba(192,57,43,.6);  color:#e05050;}
+
+.anom-desc{font-size:11px;line-height:1.7;color:var(--text-dim);margin-bottom:6px;}
+
+.anom-arts{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;padding-top:7px;border-top:1px solid var(--border);}
+.anom-arts-label{font-size:9px;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;width:100%;margin-bottom:2px;}
+.anom-art{font-size:9px;padding:2px 6px;border-radius:1px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(93,186,96,.25);color:#7ec880;}
+
+.anom-warn{
+  margin-top:8px;padding:5px 8px;
+  background:rgba(192,57,43,.07);
+  border-left:2px solid rgba(192,57,43,.5);
+  font-size:10px;color:#c07060;line-height:1.5;
+}
+.anom-warn::before{content:"⚠ ";color:#e07060;}
+
+/* ── ARCHI GRID — one wide column ── */
+.anom-grid.archi{
+  grid-template-columns:1fr;
+  gap:8px;
+  padding-bottom:50px;
+}
+
+/* ARCHI CARD — operational report, border-left strip */
+.anom-card.archi-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-left:4px solid var(--anom-color, var(--border-bright));
+  padding:0;
+  display:block;
+  clip-path:none;
+  box-shadow:none;
+  transition:background .2s, border-left-color .2s;
+}
+.anom-card.archi-card::before{ display:none; }
+.anom-card.archi-card::after{ display:none; }
+.anom-card.archi-card:hover{
+  background:rgba(14,18,13,1);
+  border-left-color: color-mix(in srgb, var(--anom-color, var(--border-bright)) 100%, white 20%);
+}
+
+.archi-inner{
+  padding:14px 18px 14px 16px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Big faint watermark */
+.archi-inner::after{
+  content:attr(data-watermark);
+  position:absolute;top:50%;right:16px;transform:translateY(-50%);
+  font-family:'Oswald',sans-serif;font-size:72px;font-weight:700;
+  color:rgba(255,255,255,.022);letter-spacing:4px;text-transform:uppercase;
+  pointer-events:none;line-height:1;white-space:nowrap;
+}
+
+.archi-label{
+  font-size:8px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:7px;font-family:'Share Tech Mono',monospace;
+  display:flex;align-items:center;gap:6px;
+}
+.archi-label::before{content:'//';color:var(--anom-color,var(--border-bright));font-size:11px;}
+
+.archi-location{
+  font-size:9px;color:var(--text-dim);letter-spacing:.5px;
+  margin-bottom:8px;padding:4px 8px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  display:inline-block;
+}
+.archi-location strong{color:var(--text);}
+
+.archi-arts-row{
+  display:flex;flex-wrap:wrap;gap:4px;
+  padding:10px 12px;
+  margin-top:10px;
+  background:rgba(0,0,0,.3);
+  border:1px solid var(--border);
+  border-left:2px solid rgba(93,186,96,.3);
+}
+.archi-arts-row .anom-arts-label{width:100%;margin-bottom:5px;}
+</style>
+<div class="section" id="section-anomalies">
+<div class="anom-filters">
+<label>Тип:</label>
+<button class="filter-btn all-btn active" onclick="filterAnom('all',this)">Все</button>
+<button class="filter-btn" data-anom-type="t-grav" onclick="filterAnom('t-grav',this)" style="color:#c8a227;border-color:rgba(200,162,39,.4);">Гравитация</button>
+<button class="filter-btn" data-anom-type="t-therm" onclick="filterAnom('t-therm',this)" style="color:#e07050;border-color:rgba(220,80,30,.4);">Термо</button>
+<button class="filter-btn" data-anom-type="t-chem" onclick="filterAnom('t-chem',this)" style="color:#7ec880;border-color:rgba(80,180,80,.4);">Хим</button>
+<button class="filter-btn" data-anom-type="t-elec" onclick="filterAnom('t-elec',this)" style="color:#7ab4e8;border-color:rgba(74,144,226,.4);">Электро</button>
+<button class="filter-btn" data-anom-type="t-space" onclick="filterAnom('t-space',this)" style="color:#bb87d8;border-color:rgba(155,89,182,.4);">Простр.</button>
+<button class="filter-btn" data-anom-type="t-plant" onclick="filterAnom('t-plant',this)" style="color:#6abf90;border-color:rgba(60,140,100,.4);">Растение</button>
+<div class="anom-sep"></div>
+<button class="filter-btn" data-anom-kind="base" onclick="filterAnomKind('base',this)">Базовые</button>
+<button class="filter-btn" data-anom-kind="archi" onclick="filterAnomKind('archi',this)">Архианомалии</button>
+</div>
+<!-- ════ БАЗОВЫЕ АНОМАЛИИ ════ -->
+<div class="anom-zone-title">// Базовые аномалии</div>
+<div class="anom-grid" id="anom-base-grid"></div><!-- /anom-grid base -->
+<!-- ════ АРХИАНОМАЛИИ ════ -->
+<div class="anom-zone-title">// Архианомалии — скопления и уникальные зоны</div>
+<div class="anom-grid archi" id="anom-archi-grid"></div><!-- /anom-grid archi -->
+</div><!-- /section-anomalies -->
+<!-- ===== СЛУЧАЙНЫЕ ТАБЛИЦЫ ===== -->
+<style>
+/* TABLES — dice oracle style */
+#section-tables{
+  padding:20px 20px 60px;
+  display:none;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:16px;
+  background: var(--bg);
+}
+#section-tables.active{ display:grid; }
+
+.rtable{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  position:relative;
+  overflow:hidden;
+}
+
+/* coloured top bar per table */
+.rtable::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background: var(--tc, var(--border-bright));
+}
+
+.rtable-head{
+  padding:12px 16px 11px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.rtable-die{
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;padding:3px 7px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  color:var(--text-dim);letter-spacing:1px;
+  flex-shrink:0;
+}
+.rtable-title{
+  font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;
+  color:var(--header);letter-spacing:2px;text-transform:uppercase;flex:1;
+}
+.rtable-roll{
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;
+  text-transform:uppercase;padding:4px 10px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--text-dim);cursor:pointer;
+  transition:all .15s;flex-shrink:0;
+}
+.rtable-roll:hover{
+  background:rgba(93,186,96,.1);
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+/* Table rows */
+.rtable-body{ padding:0; }
+.rtable-row{
+  display:grid;
+  grid-template-columns:32px 1fr;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  transition:background .15s;
+}
+.rtable-row:last-child{border-bottom:none;}
+.rtable-row.rt-highlight{
+  background:rgba(93,186,96,.07);
+}
+.rt-num{
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  color:var(--tc, var(--text-dim));
+  padding:9px 0 9px 14px;
+  opacity:.6;
+  line-height:1.5;
+  align-self:center;
+}
+.rt-text{
+  font-size:11px;line-height:1.6;color:var(--text-dim);
+  padding:9px 16px 9px 8px;
+}
+.rt-text strong{color:var(--text);font-weight:600;}
+.rt-text em{color:#8a9a7a;font-style:normal;font-size:10px;}
+
+/* Roll result popup */
+.rtable-result{
+  padding:10px 16px;
+  background:rgba(93,186,96,.07);
+  border-top:1px solid rgba(93,186,96,.2);
+  font-size:11px;color:var(--accent);
+  font-family:'Share Tech Mono',monospace;letter-spacing:.5px;
+  display:none;
+  line-height:1.6;
+}
+.rtable-result.visible{display:block;}
+.rt-result-num{opacity:.5;margin-right:6px;}
+</style>
+<div class="section" id="section-tables">
+<div class="rtable" style="--tc:rgba(192,57,43,.8);">
+<div class="rtable-head">
+<span class="rtable-die">d100</span>
+<div class="rtable-title">Случайная встреча</div>
+<button class="rtable-roll" onclick="rollTable('enc')">⚄ Бросить</button>
+</div>
+<div class="rtable-result" id="enc-result"></div>
+<div class="rtable-body" id="enc"></div>
+</div>
+<div class="rtable" style="--tc:rgba(74,144,226,.8);">
+<div class="rtable-head">
+<span class="rtable-die">d12</span>
+<div class="rtable-title">Погода</div>
+<button class="rtable-roll" onclick="rollTable('weather')">⚄ Бросить</button>
+</div>
+<div class="rtable-result" id="weather-result"></div>
+<div class="rtable-body" id="weather"></div>
+</div>
+<div class="rtable" style="--tc:rgba(93,186,96,.8);">
+<div class="rtable-head">
+<span class="rtable-die">d20</span>
+<div class="rtable-title">Настроение NPC</div>
+<button class="rtable-roll" onclick="rollTable('npc')">⚄ Бросить</button>
+</div>
+<div class="rtable-result" id="npc-result"></div>
+<div class="rtable-body" id="npc"></div>
+</div>
+<div class="rtable" style="--tc:rgba(155,89,182,.8);">
+<div class="rtable-head">
+<span class="rtable-die">d100</span>
+<div class="rtable-title">Случайная находка</div>
+<button class="rtable-roll" onclick="rollTable('loot')">⚄ Бросить</button>
+</div>
+<div class="rtable-result" id="loot-result"></div>
+<div class="rtable-body" id="loot"></div>
+</div>
+<div class="rtable" style="--tc:rgba(220,140,30,.85);">
+<div class="rtable-head">
+<span class="rtable-die">d100</span>
+<div class="rtable-title">Слухи у костра</div>
+<button class="rtable-roll" onclick="rollTable('rumor')">⚄ Бросить</button>
+</div>
+<div class="rtable-result" id="rumor-result"></div>
+<div class="rtable-body" id="rumor"></div>
+</div>
+</div><!-- /section-tables -->
+<!-- ===== ГЕНЕРАТОР ЗАДАНИЙ ===== -->
+<div class="section" id="section-generator">
+<style>
+.gen-wrap{
+  max-width:780px;margin:0 auto;padding:32px 20px 60px;
+}
+.gen-title{
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:24px;display:flex;align-items:center;gap:12px;
+}
+.gen-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* GENERATE BUTTON */
+.gen-btn{
+  display:block;width:100%;
+  font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--header);background:rgba(93,186,96,.07);
+  border:1px solid var(--border-bright);padding:14px 20px;cursor:pointer;
+  transition:all .2s;margin-bottom:28px;position:relative;overflow:hidden;
+}
+.gen-btn:hover{background:rgba(93,186,96,.14);border-color:var(--accent);color:var(--accent);}
+.gen-btn::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--accent);opacity:.6;
+}
+
+/* QUEST CARD */
+.quest-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-left:4px solid var(--accent);
+  margin-bottom:12px;
+}
+.quest-card::before{
+  content:'// ЗАДАНИЕ СГЕНЕРИРОВАНО';
+  display:block;font-size:9px;letter-spacing:2px;color:var(--text-dim);
+  padding:10px 18px 0;font-family:'Share Tech Mono',monospace;
+}
+.quest-card.old-quest{
+  border-left-color:var(--border-bright);
+  opacity:.45;
+}
+.quest-card.old-quest::before{
+  content:'// АРХИВ';
+}
+#quest-stack{display:flex;flex-direction:column;gap:0;}
+
+.quest-fields{padding:14px 18px 18px;display:flex;flex-direction:column;gap:10px;}
+.quest-field{display:grid;grid-template-columns:140px 1fr;gap:10px;align-items:baseline;}
+.quest-fl{
+  font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text-dim);font-family:'Share Tech Mono',monospace;padding-top:2px;
+}
+.quest-fv{font-size:12px;color:var(--text);line-height:1.6;}
+.quest-fv.type-val{
+  font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--header);
+}
+.quest-fv.twist-val{color:rgba(200,130,120,.9);}
+.quest-fv.reward-val{color:rgba(150,200,150,.85);}
+.quest-fv.client-val{color:rgba(200,162,39,.85);}
+
+.quest-divider{height:1px;background:var(--border);margin:4px 0;}
+
+/* FLAVOR TEXT */
+.quest-flavor{
+  padding:14px 18px 16px;border-top:1px solid var(--border);
+  font-size:11px;color:var(--text-dim);line-height:1.8;font-style:italic;
+}
+.quest-flavor::before{content:'«';color:var(--accent);}
+.quest-flavor::after{content:'»';color:var(--accent);}
+
+/* REROLL SINGLE */
+.quest-rerolls{
+  padding:10px 18px 14px;border-top:1px solid var(--border);
+  display:flex;flex-wrap:wrap;gap:6px;
+}
+.reroll-btn{
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;
+  color:var(--text-dim);background:transparent;border:1px solid var(--border);
+  padding:4px 10px;cursor:pointer;transition:all .15s;
+}
+.reroll-btn:hover{color:var(--accent);border-color:var(--accent);}
+</style>
+<div class="gen-wrap">
+<div class="gen-title">// Генератор заданий</div>
+<button class="gen-btn" onclick="generateQuest()">⚄   Сгенерировать задание</button>
+<div id="quest-stack"></div>
+</div>
+<script>
+let current = {};
+let questCounter = 0;
+
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function buildCardHTML(q, id, isActive) {
+  return `
+  <div class="quest-card${isActive ? ' active-quest' : ' old-quest'}" id="qcard-${id}">
+    <div class="quest-fields">
+      <div class="quest-field">
+        <div class="quest-fl">Тип</div>
+        <div class="quest-fv type-val" id="q-type-${id}">${q.type}</div>
+      </div>
+      <div class="quest-divider"></div>
+      <div class="quest-field">
+        <div class="quest-fl">Заказчик</div>
+        <div class="quest-fv client-val" id="q-client-${id}">${q.client.name}</div>
+      </div>
+      <div class="quest-field">
+        <div class="quest-fl">Манера</div>
+        <div class="quest-fv" id="q-manner-${id}" style="color:var(--text-dim);font-style:italic;">${q.client.manner}</div>
+      </div>
+      <div class="quest-field">
+        <div class="quest-fl">Локация</div>
+        <div class="quest-fv" id="q-location-${id}">${q.location}</div>
+      </div>
+      <div class="quest-field">
+        <div class="quest-fl">Цель / объект</div>
+        <div class="quest-fv" id="q-target-${id}">${q.target}</div>
+      </div>
+      <div class="quest-divider"></div>
+      <div class="quest-field">
+        <div class="quest-fl">Усложнение</div>
+        <div class="quest-fv twist-val" id="q-twist-${id}">${q.twist}</div>
+      </div>
+      <div class="quest-field">
+        <div class="quest-fl">Намёк на награду</div>
+        <div class="quest-fv reward-val" id="q-reward-${id}">${q.reward}</div>
+      </div>
+    </div>
+    <div class="quest-flavor" id="q-flavor-${id}">${q.flavor}</div>
+    ${isActive ? `
+    <div class="quest-rerolls">
+      <span style="font-size:9px;color:var(--text-dim);letter-spacing:1px;font-family:'Share Tech Mono',monospace;margin-right:4px;">Перебросить:</span>
+      <button class="reroll-btn" onclick="reroll('type')">Тип</button>
+      <button class="reroll-btn" onclick="reroll('client')">Заказчика</button>
+      <button class="reroll-btn" onclick="reroll('location')">Локацию</button>
+      <button class="reroll-btn" onclick="reroll('target')">Цель</button>
+      <button class="reroll-btn" onclick="reroll('twist')">Усложнение</button>
+      <button class="reroll-btn" onclick="reroll('reward')">Награду</button>
+    </div>` : ''}
+  </div>`;
+}
+
+function generateQuest() {
+  current = {
+    type:     pick(window.QD.type),
+    client:   pick(window.QD.client),
+    location: pick(window.QD.location),
+    target:   pick(window.QD.target),
+    twist:    pick(window.QD.twist),
+    reward:   pick(window.QD.reward),
+    flavor:   pick(window.QD.flavor),
+  };
+
+  questCounter++;
+  const id = questCounter;
+  const stack = document.getElementById('quest-stack');
+
+  // Demote current active card to old
+  const prevActive = stack.querySelector('.active-quest');
+  if (prevActive) {
+    // Lock height before transition
+    prevActive.style.maxHeight = prevActive.scrollHeight + 'px';
+    prevActive.classList.remove('active-quest');
+    prevActive.classList.add('old-quest');
+    // Remove reroll bar from old card
+    const rerolls = prevActive.querySelector('.quest-rerolls');
+    if (rerolls) rerolls.remove();
+    // Collapse after transition
+    requestAnimationFrame(() => {
+      prevActive.style.maxHeight = prevActive.scrollHeight + 'px';
+    });
+  }
+
+  // Insert new card at the top
+  const tmp = document.createElement('div');
+  tmp.innerHTML = buildCardHTML(current, id, true);
+  const newCard = tmp.firstElementChild;
+  newCard.style.opacity = '0';
+  newCard.style.transform = 'translateY(-10px)';
+  stack.insertBefore(newCard, stack.firstChild);
+
+  // Animate in
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      newCard.style.transition = 'opacity .25s ease, transform .25s ease';
+      newCard.style.opacity = '1';
+      newCard.style.transform = 'translateY(0)';
+    });
+  });
+}
+
+function reroll(field) {
+  current[field] = pick(window.QD[field]);
+  if (field === 'type' || field === 'client') current.flavor = pick(window.QD.flavor);
+
+  const stack = document.getElementById('quest-stack');
+  const active = stack.querySelector('.active-quest');
+  if (!active) return;
+
+  const id = active.id.replace('qcard-', '');
+
+  // Demote current to old
+  active.style.maxHeight = active.scrollHeight + 'px';
+  active.classList.remove('active-quest');
+  active.classList.add('old-quest');
+  const rerolls = active.querySelector('.quest-rerolls');
+  if (rerolls) rerolls.remove();
+
+  // Insert new card on top
+  questCounter++;
+  const newId = questCounter;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = buildCardHTML(current, newId, true);
+  const newCard = tmp.firstElementChild;
+  newCard.style.opacity = '0';
+  newCard.style.transform = 'translateY(-10px)';
+  stack.insertBefore(newCard, stack.firstChild);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      newCard.style.transition = 'opacity .25s ease, transform .25s ease';
+      newCard.style.opacity = '1';
+      newCard.style.transform = 'translateY(0)';
+    });
+  });
+}
+</script>
+</div><!-- /section-generator -->
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function filterTable(factionId, btn) {
+  // Update button states
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const rows = document.querySelectorAll('#rel-table tbody tr');
+  const colHeaders = document.querySelectorAll('#rel-table thead th.col-header');
+
+  // Reset all
+  rows.forEach(r => r.classList.remove('dim'));
+  colHeaders.forEach(h => { h.style.opacity = ''; h.style.color = ''; h.style.fontWeight = ''; });
+  document.querySelectorAll('#rel-table td.cell').forEach(c => {
+    c.classList.remove('dim-col', 'highlight-col');
+  });
+  document.querySelectorAll('#rel-table th.row-header').forEach(h => {
+    h.style.opacity = ''; h.style.color = '';
+  });
+
+  if (!factionId) return;
+
+  // Dim everything first, then reveal selected row + column
+  rows.forEach(r => {
+    const rf = r.getAttribute('data-faction');
+    if (rf !== factionId) {
+      // Dim all cells in this row individually (not the tr, to allow col override)
+      r.querySelectorAll('td.cell').forEach(c => c.classList.add('dim-col'));
+      const rh = r.querySelector('th.row-header');
+      if (rh) { rh.style.opacity = '0.15'; rh.style.color = 'var(--text-dim)'; }
+    }
+  });
+
+  // Dim col headers except selected
+  colHeaders.forEach(h => {
+    if (h.getAttribute('data-col') !== factionId) {
+      h.style.opacity = '0.15'; h.style.color = '';
+    } else {
+      h.style.opacity = '1'; h.style.color = 'var(--accent)'; h.style.fontWeight = '600';
+    }
+  });
+
+  // Un-dim and highlight the selected column cells (across ALL rows)
+  document.querySelectorAll('#rel-table td.cell[data-col="' + factionId + '"]').forEach(c => {
+    c.classList.remove('dim-col');
+    c.classList.add('highlight-col');
+  });
+
+  // Fully reveal selected row (remove dim from its cells, restore row header)
+  const selectedRow = document.querySelector('#rel-table tbody tr[data-faction="' + factionId + '"]');
+  if (selectedRow) {
+    selectedRow.querySelectorAll('td.cell').forEach(c => {
+      c.classList.remove('dim-col');
+    });
+    const rh = selectedRow.querySelector('th.row-header');
+    if (rh) { rh.style.opacity = '1'; rh.style.color = 'var(--accent)'; }
+  }
+}
+
+// Artifact filters: two independent single-selects (origin + rarity)
+let artOrigin = 'all';
+let artRarity = 'all';
+
+// Anomaly filters
+let anomType = 'all';
+let anomKind = 'all';
+
+
+
+
+
+function filterDosyeFolders(faction, btn) {
+  document.querySelectorAll('.dosye-filters-bar .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const all = faction === 'all';
+  document.querySelectorAll('[data-faction-grid]').forEach(g => {
+    g.classList.toggle('dos-hidden', !all && g.dataset.factionGrid !== faction);
+  });
+  document.querySelectorAll('[data-faction-label]').forEach(g => {
+    g.classList.toggle('dos-hidden', !all && g.dataset.factionLabel !== faction);
+  });
+  const pcGroup = document.querySelector('[data-faction-grid="pc"]');
+  const pcLabel = pcGroup && pcGroup.previousElementSibling;
+  if (pcGroup) pcGroup.classList.toggle('dos-hidden', !all);
+  if (pcLabel) pcLabel.classList.toggle('dos-hidden', !all);
+}
+
+function rollTable(id) {
+  const body = document.getElementById(id);
+  const result = document.getElementById(id + '-result');
+  if (!body || !result) return;
+
+  const rows = body.querySelectorAll('.rtable-row');
+  const n = rows.length;
+  const roll = Math.floor(Math.random() * n);
+
+  // Clear previous highlight
+  rows.forEach(r => r.classList.remove('rt-highlight'));
+
+  // Highlight rolled row
+  rows[roll].classList.add('rt-highlight');
+
+  // Show result
+  const num = rows[roll].querySelector('.rt-num').textContent.trim();
+  const text = rows[roll].querySelector('.rt-text').innerHTML;
+  result.innerHTML = `<span class="rt-result-num">[${num}]</span> ${text}`;
+  result.classList.add('visible');
+}
+
+function filterAnom(type, btn) {
+  const container = document.querySelector('.anom-filters');
+  if (type === 'all') {
+    anomType = 'all';
+    container.querySelectorAll('[data-anom-type]').forEach(b => b.classList.remove('active'));
+  } else {
+    anomType = anomType === type ? 'all' : type;
+    container.querySelectorAll('[data-anom-type]').forEach(b => b.classList.remove('active'));
+    if (anomType !== 'all') btn.classList.add('active');
+  }
+  const allBtn = container.querySelector('.all-btn');
+  allBtn.classList.toggle('active', anomType === 'all' && anomKind === 'all');
+  applyAnomFilter();
+}
+
+function filterAnomKind(kind, btn) {
+  const container = document.querySelector('.anom-filters');
+  anomKind = anomKind === kind ? 'all' : kind;
+  container.querySelectorAll('[data-anom-kind]').forEach(b => b.classList.remove('active'));
+  if (anomKind !== 'all') btn.classList.add('active');
+  const allBtn = container.querySelector('.all-btn');
+  allBtn.classList.toggle('active', anomType === 'all' && anomKind === 'all');
+  applyAnomFilter();
+}
+
+function applyAnomFilter() {
+  document.querySelectorAll('.anom-card').forEach(card => {
+    const typeOk = anomType === 'all' || card.dataset.anomType === anomType;
+    const kindOk = anomKind === 'all' || card.dataset.anomKind === anomKind;
+    card.classList.toggle('hidden', !(typeOk && kindOk));
+  });
+  // Hide/show zone titles based on visible cards
+  const baseVisible = [...document.querySelectorAll('.anom-card[data-anom-kind="base"]')].some(c => !c.classList.contains('hidden'));
+  const archiVisible = [...document.querySelectorAll('.anom-card[data-anom-kind="archi"]')].some(c => !c.classList.contains('hidden'));
+  const titles = document.querySelectorAll('#section-anomalies .anom-zone-title');
+  if (titles[0]) titles[0].style.display = baseVisible ? '' : 'none';
+  if (titles[1]) titles[1].style.display = archiVisible ? '' : 'none';
+}
+
+function filterArt(mode, value, btn) {
+  const container = document.querySelector('.art-filters');
+
+  if (value === 'all') {
+    // Reset everything
+    artOrigin = 'all';
+    artRarity = 'all';
+    container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  } else if (mode === 'origin') {
+    // Toggle: if already active — reset to all
+    if (artOrigin === value) {
+      artOrigin = 'all';
+      btn.classList.remove('active');
+    } else {
+      artOrigin = value;
+      container.querySelectorAll('[data-origin]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+  } else if (mode === 'rarity') {
+    if (artRarity === value) {
+      artRarity = 'all';
+      btn.classList.remove('active');
+    } else {
+      artRarity = value;
+      container.querySelectorAll('[data-rarity]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+  }
+
+  // Sync "Все" button
+  const allBtn = container.querySelector('.all-btn');
+  if (artOrigin === 'all' && artRarity === 'all') {
+    allBtn.classList.add('active');
+  } else {
+    allBtn.classList.remove('active');
+  }
+
+  // Show/hide cards
+  document.querySelectorAll('.art-card').forEach(card => {
+    const originOk = artOrigin === 'all' || card.dataset.origin === artOrigin;
+    const rarityOk = artRarity === 'all' || card.dataset.rarity === artRarity;
+    card.classList.toggle('hidden', !(originOk && rarityOk));
+  });
+}
+
+function filterBestiary(tier, btn) {
+  document.querySelectorAll('.bestiary-filter .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.mut-card').forEach(card => {
+    card.classList.toggle('hidden', tier !== 'all' && card.dataset.tier !== tier);
+  });
+}
+
+function openDosye(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDosye(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeDosyeOutside(e, overlay) {
+  if (e.target === overlay) {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+</script>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  DATA LOADER — reads JSON files and renders all sections
+// ════════════════════════════════════════════════════════
+
+const FACTION_META = {
+  neutral:       { label: 'Нейтральные',    color: '#b0b0a0' },
+  clean_sky:     { label: 'Чистое небо',    color: '#64b4dc' },
+  freedom:       { label: 'Свобода',        color: '#50b450' },
+  duty:          { label: 'Долг',           color: '#d23c3c' },
+  loners:        { label: 'Одиночки',       color: '#beaa64' },
+  bandits:       { label: 'Бандиты',        color: '#a05a28' },
+  military:      { label: 'Военные',        color: '#648cb4' },
+  mercs:         { label: 'Наёмники',       color: '#8c8c50' },
+  alpha:         { label: 'ЧВК «Альфа»',   color: '#c0392b' },
+  scientists:    { label: 'Учёные',         color: '#80c8c8' },
+  varangi:       { label: 'Варяги',         color: '#e8a020' },
+  iig:           { label: 'ИИГ',            color: '#4080c0' },
+  phantoms:      { label: 'Фантомы',        color: '#9090a0' },
+  fallen_angels: { label: 'Падшие Ангелы',  color: '#c0c0e0' },
+  last_day:      { label: 'Последний день', color: '#b04040' },
+  peacekeepers:  { label: 'Миротворцы',     color: '#3090b0' },
+};
+
+const CAT_LABELS = {
+  trader:'Торговец', tech:'Техник', scientist:'Учёный',
+  guide:'Проводник', commander:'Командир', loner:'Одиночка',
+  bandit:'Бандит', merc:'Наёмник', medic:'Медик',
+  sniper:'Снайпер', engineer:'Инженер', analyst:'Аналитик',
+  operative:'Оперативник', comms:'Связист', enforcer:'Исполнитель',
+  logistics:'Интендант', biologist:'Биолог', archivist:'Архивист',
+};
+
+const FACTION_ORDER = ['neutral','clean_sky','freedom','duty','scientists',
+  'loners','bandits','military','mercs','alpha','varangi','iig',
+  'phantoms','fallen_angels','last_day','peacekeepers'];
+
+const PC_IDS = ['litva','vedmak','tuz'];
+
+// ── Bestiary ─────────────────────────────────────────────────────────────
+function renderBestiary(data) {
+  document.querySelector('.bestiary-grid').innerHTML = data.map(m => `
+    <div class="mut-card tier-${m.tier}" data-tier="${m.tier}">
+      <div class="mut-header">
+        <div class="mut-name">${m.name}</div>
+        <span class="mut-tier tier-label-${m.tier}">${m.tier_label}</span>
+      </div>
+      <div class="mut-traits">
+        ${m.traits.map(t => `<span class="mut-trait ${t.type}">${t.text}</span>`).join('')}
+      </div>
+      <div class="mut-block">
+        <div class="mut-block-label">Внешность</div>
+        <div class="mut-block-text">${m.look}</div>
+      </div>
+      <div class="mut-block">
+        <div class="mut-block-label">Поведение</div>
+        <div class="mut-block-text">${m.behavior}</div>
+      </div>
+      ${m.tactic ? `<div class="mut-tactic">${m.tactic}</div>` : ''}
+    </div>`).join('');
+}
+
+// ── Artifacts ────────────────────────────────────────────────────────────
+function renderArtifacts(data) {
+  document.querySelector('.art-grid').innerHTML = data.map(a => `
+    <div class="art-card ${a.origin}" data-origin="${a.origin}" data-rarity="${a.rarity}">
+      <div class="art-head">
+        <div class="art-name">${a.name}</div>
+        <span class="art-rarity ${a.rarity}">${a.rarity_label}</span>
+      </div>
+      <div class="art-tags">
+        ${a.tags.map(t => `<span class="art-tag ${t.type}">${t.text}</span>`).join('')}
+      </div>
+      <div class="art-effect">${a.effect}</div>
+      <div class="art-look">${a.look}</div>
+      ${a.note ? `<div class="art-note">${a.note}</div>` : ''}
+    </div>`).join('');
+}
+
+// ── Anomalies ────────────────────────────────────────────────────────────
+function renderAnomalies(data) {
+  const baseGrid  = document.getElementById('anom-base-grid');
+  const archiGrid = document.getElementById('anom-archi-grid');
+
+  baseGrid.innerHTML = data.filter(a => a.kind === 'base').map(a => `
+    <div class="anom-card t-${a.type.replace('t-','')}" data-anom-type="${a.type}" data-anom-kind="base">
+      <div class="anom-head">
+        <div class="anom-name">${a.name}</div>
+        <span class="anom-type at-${a.type.replace('t-','')}">${a.type_label}</span>
+      </div>
+      <div class="anom-tags">
+        ${(a.tags||[]).map(t => `<span class="anom-tag ${t.type}">${t.text}</span>`).join('')}
+      </div>
+      <div class="anom-desc">${a.desc}</div>
+      ${a.artifacts.length ? `
+      <div class="anom-arts">
+        <div class="anom-arts-label">Артефакты</div>
+        ${a.artifacts.map(x => `<span class="anom-art">${x}</span>`).join('')}
+      </div>` : ''}
+      ${a.warning ? `<div class="anom-warn">${a.warning}</div>` : ''}
+    </div>`).join('');
+
+  archiGrid.innerHTML = data.filter(a => a.kind === 'archi').map(a => `
+    <div class="anom-card archi-card t-${a.type.replace('t-','')}" data-anom-type="${a.type}" data-anom-kind="archi">
+      <div class="archi-inner" data-watermark="${a.watermark}">
+        <div class="archi-label">АРХИАНОМАЛИЯ · ${a.type_label}</div>
+        <div class="anom-head">
+          <div class="anom-name">${a.name}</div>
+          <span class="anom-type at-${a.type.replace('t-','')}">${a.count_label}</span>
+        </div>
+        <div class="archi-location"><strong>Локация:</strong> ${a.location}</div>
+        <div class="anom-desc">${a.desc}</div>
+        ${a.artifacts.length ? `
+        <div class="archi-arts-row">
+          <div class="anom-arts-label">Артефакты</div>
+          ${a.artifacts.map(x => `<span class="anom-art">${x}</span>`).join('')}
+        </div>` : ''}
+        ${a.warning ? `<div class="anom-warn">${a.warning}</div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+// ── Locations ────────────────────────────────────────────────────────────
+function renderLocations(data) {
+  document.querySelector('.loc-grid').innerHTML = data.map(l => `
+    <div class="loc-card zone-${l.zone}" data-zone="${l.zone}">
+      <div class="loc-header">
+        <div class="loc-name">${l.name}</div>
+        <span class="loc-badge badge-${l.zone}">${l.zone_label}</span>
+      </div>
+      <div class="loc-danger">
+        <span>☢ Радиация: ${l.danger.radiation}</span>
+        <span>⚠ Аномалии: ${l.danger.anomalies}</span>
+        <span>🐺 Мутанты: ${l.danger.mutants}</span>
+      </div>
+      <div class="loc-desc">
+        ${l.desc.map(p => `<p>${p}</p>`).join('')}
+      </div>
+      ${l.points.length ? `
+      <div class="loc-points">
+        <div class="loc-points-title">// Ключевые точки</div>
+        ${l.points.map(p => `<div class="loc-point">${p}</div>`).join('')}
+      </div>` : ''}
+      ${l.factions && l.factions.length ? `
+      <div class="loc-factions">// Представляет интерес для: ${l.factions.join(', ')}</div>` : ''}
+    </div>`).join('');
+}
+
+// ── Tables ───────────────────────────────────────────────────────────────
+function renderTables(data) {
+  data.tables.forEach(t => {
+    const body = document.getElementById(t.id);
+    if (!body) return;
+    body.innerHTML = t.rows.map(r => `
+      <div class="rtable-row">
+        <div class="rt-num">${r.num}</div>
+        <div class="rt-text">${r.text}</div>
+      </div>`).join('');
+  });
+}
+
+// ── Dosye ────────────────────────────────────────────────────────────────
+function _folder(c, isPC) {
+  const fm = FACTION_META[c.faction] || { color: '#888' };
+  const cat = CAT_LABELS[c.cat] || c.cat;
+  const oid = isPC ? `dosye-${c.id}` : `dosye-npc-${c.id}`;
+  return `
+    <div class="dosye-folder${isPC ? ' folder-pc' : ''}" onclick="openDosye('${oid}')"
+         style="border-top-color:${fm.color}99;">
+      <div class="folder-stamp">${cat}</div>
+      <div class="folder-codename">${c.name}${c.fullname
+        ? ` <span style="font-size:11px;font-weight:400;color:var(--text-dim);letter-spacing:1px">${c.fullname}</span>`
+        : ''}</div>
+      <div class="folder-realname">${c.role||''}</div>
+      <div class="folder-chips">${(c.chips||[]).map(x=>`<span class="folder-chip">${x}</span>`).join('')}</div>
+      <div class="folder-hint">▶ открыть</div>
+    </div>`;
+}
+
+function _overlay(c, isPC) {
+  const fm  = FACTION_META[c.faction] || { label:'', color:'#888' };
+  const cat = CAT_LABELS[c.cat] || c.cat;
+  const oid = isPC ? `dosye-${c.id}` : `dosye-npc-${c.id}`;
+  const paperCls = isPC ? 'dosye-paper paper-pc' : 'dosye-paper';
+  return `
+    <div id="${oid}" class="dosye-overlay" onclick="closeDosyeOutside(event,this)">
+    <div class="${paperCls}" style="border-top-color:${fm.color};">
+      <button class="dosye-close" onclick="closeDosye('${oid}')">✕</button>
+      <div class="dossier">
+        <div class="dossier-header">
+          <div class="dossier-codename">${c.name.toUpperCase()}</div>
+          <div class="dossier-sub">${cat} · ${fm.label}</div>
+        </div>
+        <div class="dossier-meta">
+          <div class="dossier-field">
+            <div class="dossier-field-label">Роль</div>
+            <div class="dossier-field-value" style="color:${fm.color}">${cat}</div>
+          </div>
+          ${c.fullname ? `
+          <div class="dossier-field">
+            <div class="dossier-field-label">Имя</div>
+            <div class="dossier-field-value">${c.fullname}</div>
+          </div>` : ''}
+          <div class="dossier-field">
+            <div class="dossier-field-label">Группировка</div>
+            <div class="dossier-field-value" style="color:${fm.color}">${fm.label}</div>
+          </div>
+        </div>
+        ${c.look ? `
+        <div class="dossier-section">
+          <h4>Внешность и характер</h4>
+          <div class="dossier-text"><p>${c.look}</p></div>
+        </div>` : ''}
+        ${c.useful ? `
+        <div class="dossier-section">
+          <h4>Чем полезен</h4>
+          <div class="dossier-text"><p>${c.useful}</p></div>
+        </div>` : ''}
+        ${c.secret ? `
+        <div class="dossier-section">
+          <h4>Тайное</h4>
+          <div class="dossier-text"><p>${c.secret}</p></div>
+        </div>` : ''}
+        ${c.hook ? `
+        <div class="dossier-warning" style="border-color:${fm.color}55;color:${fm.color};">
+          ▶ Зацепка: ${c.hook}
+        </div>` : ''}
+      </div>
+    </div>
+    </div>`;
+}
+
+function renderDosye(data) {
+  const section = document.getElementById('section-dosye');
+  const pcChars  = data.filter(c => PC_IDS.includes(c.id));
+  const npcChars = data.filter(c => !PC_IDS.includes(c.id));
+
+  let html = `
+    <div class="dosye-group-label">// Персонажи игроков</div>
+    <div class="dosye-grid" data-faction-grid="pc">
+      ${pcChars.map(c => _folder(c, true)).join('')}
+    </div>`;
+
+  for (const fid of FACTION_ORDER) {
+    const group = npcChars.filter(c => c.faction === fid);
+    if (!group.length) continue;
+    const fm = FACTION_META[fid];
+    html += `
+      <div class="dosye-group-label" data-faction-label="${fid}" style="color:${fm.color}aa;">// ${fm.label}</div>
+      <div class="dosye-grid" data-faction-grid="${fid}">
+        ${group.map(c => _folder(c, false)).join('')}
+      </div>`;
+  }
+
+  // All overlays
+  html += [...pcChars.map(c=>_overlay(c,true)), ...npcChars.map(c=>_overlay(c,false))].join('');
+  section.insertAdjacentHTML('beforeend', html);
+}
+
+// ── Quest Generator ───────────────────────────────────────────────────────
+function initQuestGenerator(qd) {
+  // Inject into window so generateQuest() can access it
+  window.QD = qd;
+}
+
+// ── Bootstrap ─────────────────────────────────────────────────────────────
+async function loadAllData() {
+  const B = './data/';
+  try {
+    const [chars, bestiary, artifacts, anomalies, locations, tables, quests] =
+      await Promise.all([
+        fetch(B+'characters.json').then(r=>r.json()),
+        fetch(B+'bestiary.json').then(r=>r.json()),
+        fetch(B+'artifacts.json').then(r=>r.json()),
+        fetch(B+'anomalies.json').then(r=>r.json()),
+        fetch(B+'locations.json').then(r=>r.json()),
+        fetch(B+'tables.json').then(r=>r.json()),
+        fetch(B+'quest-generator.json').then(r=>r.json()),
+      ]);
+    renderBestiary(bestiary);
+    renderArtifacts(artifacts);
+    renderAnomalies(anomalies);
+    renderLocations(locations);
+    renderTables(tables);
+    renderDosye(chars);
+    initQuestGenerator(quests);
+  } catch(e) {
+    console.error('Failed to load data:', e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadAllData);
+</script>
+
+</body>
+</html>
