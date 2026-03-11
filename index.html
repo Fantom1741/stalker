@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Война группировок — S.T.A.L.K.E.R. ЧН 2010</title>
+<title>S.T.A.L.K.E.R. 2011</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@300;400;600;700&display=swap');
 :root{
@@ -2964,7 +2964,9 @@ function filterAnom(type, btn) {
   const container = document.querySelector('.anom-filters');
   if (type === 'all') {
     anomType = 'all';
+    anomKind = 'all';
     container.querySelectorAll('[data-anom-type]').forEach(b => b.classList.remove('active'));
+    container.querySelectorAll('[data-anom-kind]').forEach(b => b.classList.remove('active'));
   } else {
     anomType = anomType === type ? 'all' : type;
     container.querySelectorAll('[data-anom-type]').forEach(b => b.classList.remove('active'));
